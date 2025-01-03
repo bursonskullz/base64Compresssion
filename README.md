@@ -19,6 +19,7 @@ git clone https://github.com/your-username/base64Compression.git
 ### 2. Install JSON Packages (if needed for the project)
 
 ```
+npm node
 npm init -y
 ```
 
@@ -28,9 +29,13 @@ npm init -y
 var base64TestString = `data:image/png;base64, Your-test-string-goes-here`;
 ```
 
-## 4. compile with compresstionTest.js and compare results 
+## 4. compile with compresstionTest.js with node and compare results 
+
+```
+node cmopressionTest.js
+```
 
 ## 5. For Industrial Application
-We recommend waiting for the code to be fully fixed, but the necessary functions to run the algorithm are located in `bursonBase64Encryption.js`. The file `compressionTest.js` is an implementation of the algorithm. You must initialize the data to use the encryption, and we encourage users to create their own set of symbols in the arrays `uniqueChars`, `uniqueChars2`, and `uniqueChars3`. 
+We recommend waiting for the code to be fully fixed, but the necessary functions to run the algorithm are located in `bursonBase64Encryption.js`. The file `compressionTest.js` is an implementation of the algorithm. You must initialize the data to use the encryption, and we encourage users to create their own set of symbols in the arrays `uniqueChars`, `uniqueChars2`, and `uniqueChars3` and exporting the main functions into there own files rather then using the compression test file. 
 
 Currently, we are testing the algorithm with Chinese, Japanese, and Cambodian symbols, but we're experiencing some minor issues. Our intention is to develop unique trifold notes that we can implement into the algorithm instead of relying on a set of pre-defined symbols in Unicode. This will make the code more adaptable and secure at the same time.
