@@ -32,7 +32,7 @@ var base64TestString = `data:image/png;base64, Your-test-string-goes-here`;
 ## 4. compile with compresstionTest.js with node and compare results 
 
 ```
-node cmopressionTest.js
+node compressionTest.js
 ```
 
 ## 5. For Industrial Application
