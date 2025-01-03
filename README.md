@@ -29,7 +29,7 @@ npm init -y
 var base64TestString = `data:image/png;base64, Your-test-string-goes-here`;
 ```
 
-## 4. compile with compresstionTest.js with node and compare results 
+## 4. compile the file compresstionTest.js with node and compare results 
 
 ```
 node compressionTest.js
