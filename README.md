@@ -25,7 +25,7 @@ If required, compile the necessary JSON packages by running the following comman
 ## 3.  To test a base64 string edit the line 
 
 ```
-"var base64TestString = `data:image/png;base64, 123456789`; // test string (edit here for results);"
+var base64TestString = `data:image/png;base64, 123456789`; // test string (edit here for results);
 ```
 
 ## 4. compile with compresstionTest.js and compare results 
