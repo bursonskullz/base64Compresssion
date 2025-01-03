@@ -9,9 +9,9 @@ console.log(bursonCryptopgraphy);
 console.log('initializing data . . .');
 
 
-let uniqueChars = [];
-let uniqueChars2 = [];
-let uniqueChars3 = [];
+global.uniqueChars = [];
+global.uniqueChars2 = [];
+global.uniqueChars3 = [];
 
 let mainBase = 26; 
 let digitBase = 10;
