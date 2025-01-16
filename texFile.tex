@@ -1,0 +1,628 @@
+\documentclass[amsmath,12pt,a4paper]{amsart}
+\usepackage{amsfonts, amssymb, amsmath, amscd}
+\usepackage{amsthm}
+\usepackage[pdftex]{graphicx}
+\usepackage{multicol}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{ragged2e,caption}
+\usepackage{pgfplots}
+\usepackage{pifont}
+\pgfplotsset{compat=1.17}
+\addtolength{\textheight}{4cm}
+\addtolength{\voffset}{-2cm}
+\addtolength{\textwidth}{5cm}%{6cm}%{4cm}
+\addtolength{\hoffset}{-2cm}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\karat}{\textasciicircum}
+\definecolor{lightblue}{rgb}{0.68,0.85,0.90} % Example custom light blue
+\usepackage{bm,bigints, comment}
+\usepackage{booktabs}
+\usepackage{mathrsfs}
+\usepackage{color}
+\usepackage{enumitem} 
+\newtheorem{theorem}{Theorem}
+\newtheorem{prop}{Proposition}
+\newtheorem{Corollary}{Corollary}
+\newtheorem{conj}{Conjecture}
+\newtheorem{lemma}{Lemma}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{Remark}{Remark}
+\newtheorem{Observation}{Observation}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\title[Base 64 Finite Compression Algorithm] {Base 64 Finite Compression Algorithm}
+
+\author{R. Burson}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+This work focuses on reducing base 64 data strings which is one of the most common bases used throughout computer science. We introduce the $M$-char inversion Theorem which can be used on any base 64 data set. In the corresponding algorithm we developed our own set of symbols from drawing Trefoil knots in which we have implementing up to a 5-char reduction technique and is out of the reach of the unicode symbols range.
+\end{abstract}
+
+
+\section{Introduction}\label{Sec1}
+
+ The current need for efficient data compression techniques is more crucial than ever. This work presents a new method to compress data strings in base 64 through employing a unique multi-character reduction approach. Our goal is to compress data making it not just effective but also practical for real-world applications. At the core of our approach is the creation of bijections between multi-character $M$-char substrings and single-character representations in other sets allowing us to streamline large base 64 strings into smaller more manageable formats without sacrificing any important information. We utilize advanced mathematical mappings including the Generalized M-char inverse theorem to keep our compression framework robust and reliable. Through the incorporation of concepts like the Trefoil knots we are able to initialize enough symbols that where needed for our compression tool ensuring each symbol accurately represents specific data patterns. We have tested our compression technique and the results speak for themselves showing impressive reduction sizes in different various scenarios. Although, we are experiencing some challenges of the accuracy between these technical maps we are actively refining the process to guarantee that symbols are unique and that the reconstructed data accurately reflects the string before it was compressed. This work not only offers a solid solution for compressing string in base 64 but also opens the door for future advancements in the field. We aim to inspire further exploration of higher-order character reductions and there applications in modern data management systems.
+ 
+\section{The $M$-char Reduction Map} 
+Let $Y$ be a string with length $m$ in base 64, $\mathcal{A}_m$ the set of strings with length $m$ of strictly capital characters $A$--$Z$
+
+\begin{equation}\label{Eq1}
+\mathcal{A}_m = \{a_1a_2\ldots a_m : a_j \in \{A, B, \ldots, Z\}, \; 1 \leq j \leq m\},
+\end{equation}
+
+$\mathcal{X}_m$ the set of strings with length $m$ of strictly lowercase characters $a$--$z$
+
+\begin{equation}\label{Eq2}
+\mathcal{X}_m = \{a_1a_2\ldots a_m : a_j \in \{a, b, \ldots, z\}, \; 1 \leq j \leq m\},
+\end{equation}
+
+$\mathcal{S}_m$ the set of all possible string combinations of length $m$ with characters in $A$--$Z$ or $a$--$z$\
+
+\begin{equation}\label{Eq3}
+\mathcal{S}_m = \{a_1a_2\ldots a_m : a_j \in \{A, B, \ldots, Z, a, b, \ldots, z\}, \; 1 \leq j \leq m\},
+\end{equation}
+
+and 
+
+\begin{equation}\label{Eq4}
+\mathcal{P}_m = \{\biggl(\xi_1,\xi_2,\cdots, \xi_m\biggr) : \xi_j \in \{0,1\}, ~~1\le j\le m\}.
+\end{equation}
+
+
+We call $\mathcal{P}_m$ the permutation set with modulus $m$. Next, take the set $\mathcal{L}_m$ to be the set of string combinations of length $m$ containing at least one lowercase and upper case inside 
+
+\begin{equation}\label{Eq5}
+\mathcal{L}_m = S_m \setminus A_m.
+\end{equation}
+
+
+Next consider any set $\mathcal{E}_m$ with $26^m$ elements (i.e $|\mathcal{E}_m| = 26^m$) where $m>0$. Define the set operator $\mathcal{E}_m ~ \vert ~\mathcal{P}_m$ as all $2$-char string combinations with one element in $\mathcal{P}_m$ and the other in $\mathcal{E}_m$ 
+
+\begin{equation}\label{Eq6}
+\mathcal{E}_m ~ \vert ~\mathcal{P}_m = \biggl\{EP:~~ E\in \mathcal{E}_m, ~P\in \mathcal{P}_m\biggr\}.
+\end{equation}
+
+Further, let $\mathcal{I}_m$ be the set of strings that are integers with length $m$ in base ten
+
+\begin{equation}\label{Eq7}
+\mathcal{I}_m  =\biggl\{a_1a_2\cdots a_m~:~ a_j\in \{0,1,2,\cdots,9\},~1\le j\le m\biggr\}.
+\end{equation}
+
+Consider the map $\iota: \{A,B,C,\cdots,Z\}\cup \{a,b,c,\cdots,z\}\rightarrow \{0,1\}$ defined as 
+
+
+\begin{equation}\label{Eq8}
+\iota(x) = \begin{cases}
+1 & \text{if $x\in \{A,B,C,\cdots,Z\}$}\\
+0 & \text{if $x\in \{a,b,c,\cdots, z\}$}.
+\end{cases}
+\end{equation}
+
+Let $\partial ~:~\mathcal{A}_m\rightarrow \mathcal{P}_m$ denote the mapping that takes an $M$-char string to a permutation (to help identify its case sensitivity)
+
+
+\begin{equation}\label{Eq9}
+x_1x_2x_3\cdots x_m\mapsto \biggl(\iota(x_1),\iota(x_2),\cdots, \iota(x_m)\biggr)
+\end{equation}
+
+and $\hbar~:~ \mathcal{P}_m \setminus \biggl\{\underbrace{(0,0,\cdots,0)}_{m-times}, \underbrace{(1,1,\cdots,1)}_{m-times}\biggr\}\rightarrow \mathcal{D}_m$ to be any bijection with $|\mathcal{D}_m|= 2^m-2$ and $\mathcal{E}_m \cap \mathcal{I}_m = \emptyset$. Next consider any two bijection $\alpha_m~:~ \{1,2,\cdots, 26^m\}\rightarrow \mathcal{E}_m$ and $\gamma:~\{1,2,\cdots, 10^m\}\rightarrow \mathcal{I}_m$ then consider functions $\beta_m:~\mathcal{A}_m \rightarrow \mathcal{D}_m$ and $\delta_m:~\{1,2,\cdots, 26^m\}\rightarrow \mathcal{E}_m ~\vert ~ \{\sim\}$ defined by the rules 
+ 
+ \begin{equation}\label{Eq10} 
+a\mapsto \alpha_m(a) \hbar\biggl(\partial(a)\biggl)
+ \end{equation}
+ 
+ and 
+ 
+ \begin{equation}\label{Eq11}
+ a \mapsto \alpha_m(a)^{\texttt{\^{}}}
+ \end{equation}
+ 
+ respectfully (this is simply the concatenation of the prime character $\texttt{\^{}}$ and the output $\alpha_m(a)$ ) with the condition 
+ 
+ 
+ \begin{equation}\label{Eq12} 
+ \mathcal{E}_m \cap \mathcal{I}_m\cap\mathcal{D}_m = \emptyset.
+ \end{equation}
+ 
+ 
+ 
+Next consider the particular bijection $\Xi: \{a,b,c,\cdots,z\}\rightarrow \{A,B,C,\cdots,Z\} $ defined by the rule $\Xi(a) = A,~\Xi(b) = B,~ \cdots \Xi(z) = Z $. Set $\Im: \mathcal{S}_1\rightarrow \mathcal{A}_1$ as the function 
+
+
+\begin{equation}\label{Eq13}
+a \mapsto \begin{cases}
+a & \text{If $\iota(a) =1$}\\
+\Xi(a)& \text{If $\iota(a)=0$}
+\end{cases}
+\end{equation}
+
+then we define $\varphi:\mathcal{A}_m \cup \mathcal{X}_m \rightarrow \mathcal{A}_m$ as the map that takes a string $Y$ and turns it into all capital case characters
+
+\begin{equation}\label{Eq14}
+a_1a_2\cdots a_m\mapsto \Im(a_1)\Im(a_2)\cdots \Im(a_m)
+\end{equation}
+
+ lastly, consider $\mho_m$ that transforms $Y$ as follows
+ 
+ 
+\begin{equation}\label{Eq15}
+\mho_m(Y)\mapsto \begin{cases}
+\alpha_m(Y) & \text{if $\varphi(Y) = Y$ and $Y \in \mathcal{A}_m$} \\
+\beta_m(Y) & \text{if $\varphi(Y) \neq Y$ and $Y \in \mathcal{L}_m$} \\
+\gamma_m(Y) & \text{if $Y \in \mathcal{I}_m$} \\
+\delta_m(Y) & \text{if $Y \in \mathcal{X}_m$}\\
+Y & \text{Otherwise}.
+\end{cases}
+\end{equation} 
+ 
+The map $\mho_m(Y)$ is called the $M$-char reduction map.
+
+
+\begin{example}\label{Ex1}
+Let $\Sigma = \{123AbCAYLlli+illYACbA332tU\}$ and consider all the subsets that have the same order in chunks of at most three elements 
+
+\begin{equation}\label{Eq16}
+\{123\}, \{AbC\}, \{AYL\}, \{lli\}, \{+\},\{ill\}, \{YAC\}, \{bA3\}, \{32t\} , \{U\}.
+\end{equation}
+
+Let $\mathcal{C}$ be any subset of Chinese symbols in the unicode range $[0x4E00,~0x9FFF]$ with $|\mathcal{C}|=26^3$. let $\mathcal{J}$ denote the a set of Japanese symbols from the range $[0x4E00,0x9FFF]$ (Katakana). Set $$\mathcal{D} = \{\Cap, \boxtimes, \circledast, \circledcirc,\bowtie, \between \}$$ and after take $\hbar:~p_3\setminus \{(0,0,0),~(1,1,1)\}\rightarrow \mathcal{D} $ to be the bijection
+
+
+\begin{equation}\label{Eq17}
+\begin{split}
+\hbar(0,1,1) & = \Cap\\
+\hbar(0,0,1) & = \boxtimes \\
+\hbar(0,1,0) & = \circledast \\
+\hbar(1,0,0) & = \circledcirc \\
+\hbar(1,1,0) & = ~\bowtie \\
+\hbar(1,0,1) & = ~\between.
+\end{split}
+\end{equation}
+
+Next let $\mathcal{J}^\prime$ be a subset such that $|\mathcal{J}^\prime| = 10^3$ and $\mathcal{J}^\prime \cap \mathcal{C} = \emptyset$. Consider any two arbitrary bijections $\alpha:~\{1,2,\cdots, 26^3\} \rightarrow \mathcal{C}$, $\gamma:~\{1,2\cdots, 10^3\}\rightarrow \mathcal{J}^\prime$ , and take $\beta$  and $\delta$ explicitly defined as 
+
+\begin{equation}\label{Eq18}
+a\mapsto \alpha(a) \hbar\biggl(\partial (a)\biggr), \indent a \mapsto \alpha(a)^{\texttt{\^{}}}
+\end{equation}
+
+respectfully. Lastly, consider the reduction map $\mho_3(Y)$ 
+
+\begin{equation}\label{Eq19}
+\mho_3(Y) = \begin{cases}
+\alpha(Y) & \textbf{If $\varphi(Y) = Y$ and $Y\in \mathcal{A}_3$}\\
+\beta(Y) & \text{If $\varphi(Y) \neq Y$ and $Y\in \mathcal{L}_3$}\\
+\gamma(Y) & \text{If $Y\in \mathcal{I}_3$}\\
+\delta(Y) & \text{If $Y \in \mathcal{X}_3$}\\
+Y & \text{Otherwise}
+\end{cases}
+\end{equation}
+
+Representing $\Sigma$ as an ordered string we have 
+
+\begin{equation}\label{Eq20}
+\begin{split}
+\Sigma  & = \gamma(123)\beta(AbC)\alpha(AYL)\delta(lli)+\delta(ill)\alpha(YAC)bA332tU\\
+& = \gamma(123)\alpha(ABC)\between \alpha(LLI)^{\texttt{\^{}}}+ \alpha(ILL)^{\texttt{\^{}}}\alpha(YAC)bA332tU
+\end{split}
+\end{equation}
+
+\end{example}
+ 
+ \begin{example}\label{Ex2}
+ Take $\Sigma = \{123AbCJKII+INJ\}$ and set $m=3$. Let $\mathcal{C}$ denote a set of Chinese symbols with cardinality $|\mathcal{C}| = 26^3$, and let $\mathcal{D} = \{\spadesuit,\lozenge, \emptyset,\Game,\blacktriangle,\blacktriangledown\}$. Take $\hbar:~\mathcal{P}_3\setminus \{(0,0,0), ~(1,1,1,)\}\rightarrow \mathcal{D}$ to be the bijection 
+ 
+ 
+ \begin{equation}\label{Eq21}
+ \begin{split}
+ \hbar(0,0,1) & = \Game\\
+  \hbar(0,1,1) & = \lozenge\\
+ \hbar(0,1,0) & = \emptyset\\
+ \hbar(1,1,0) & = \blacktriangle\\
+ \hbar(1,0,0) & = \blacktriangledown\\
+ \hbar(1,0,1) & = \spadesuit
+ \end{split}
+ \end{equation}
+ 
+ 
+ Set $\mathcal{E}$ to denote all the emoji symbols available unicode (there are currently more then $3,600$). Take any subset $\mathcal{K}\subset \mathcal{E}$ such that $|\mathcal{K}|=1000$. Take two arbitrary bijection $\gamma:~\{1,2,\cdots,26^3\}\rightarrow \mathcal{K}$, $\alpha:~ \mathcal{A}_3\rightarrow \mathcal{C}$, and then define $\beta:~\mathcal{A}_3\rightarrow \mathcal{K}~\vert ~\mathcal{D}$ and $\delta:~\{1,2,\cdots, 26^3\}\rightarrow \mathcal{E} ~\vert ~\{\sim\}$ defined as followed  $$a\mapsto \alpha(a)\hbar\biggl(\partial (a)\biggr), \indent a\mapsto \alpha(a)^{\texttt{\^{}}}.$$ We set the reduction map 
+ 
+\begin{equation}\label{Eq22}
+\mho_3(Y) = \begin{cases}
+\alpha(Y) & \text{if $\varphi(Y) = Y$ and $Y\in \mathcal{A}_3$}\\
+\beta(Y) & \text{If $\varphi(Y)\neq Y$ and $Y\in \mathcal{L}_3$}\\
+\gamma(Y) & \text{If $Y\in \mathcal{I}_3$}\\
+\delta(Y) & \text{If $Y\in \mathcal{X}_3$}\\
+Y & \text{Otherwise}
+\end{cases}
+\end{equation} 
+ 
+Finally, representing $\Sigma$ as an ordered string we have
+
+\begin{equation}\label{Eq23}
+\begin{split}
+\Sigma  & = \gamma(123)\beta(AbC)\alpha(JNK)II+\alpha(INJ) \\
+& = \gamma(123)\alpha(ABC)\spadesuit \alpha(JNK)II+\alpha(INJ).
+\end{split}
+\end{equation}
+
+ \end{example}
+ 
+ \begin{example}\label{Ex3}
+This example skips the bijection definitions since the reader can clarify if the context is provided. Using $
+\Sigma = \{A x B IJK Y + Y Y 12356RD\},
+$ we can separate it into seven organized set
+
+
+\begin{equation}\label{Eq24}
+\{AxB\},~\{IJK\}, ~\{Y+Y\}, ~\{Y\},~\{123\}, ~\{56R\},~\{D\}
+\end{equation}
+
+Then we have
+
+\begin{equation}\label{Eq25}
+\begin{split}
+Axb & \mapsto \beta\triangle~(\text{1 char chineese symbol with 1-char Khmfer attachment })\\
+IJK & \mapsto \alpha \indent (\text{1-char chineese string})\\
+Y+Y & \mapsto Y+Y~ \indent (\text{identity map})\\
+Y& \mapsto Y ~\text{(identity map)}\\
+123& \mapsto \upsilon ~\indent (\text{1-char japnese string})\\
+56R & \mapsto 56R ~\indent (\text{identity  map})\\
+D & \mapsto D~ (\text{identity map})
+\end{split}
+\end{equation}
+
+the result is
+
+\begin{equation}\label{Eq26}
+\begin{split}
+\Sigma &= "AxBIJKY+YY12356RD"\\
+ & = "\beta\vartriangle \alpha Y+YY\upsilon56RD "\\
+\end{split}
+\end{equation}
+ \end{example}
+ 
+ 
+ \section{M-char index assigning and inverse reduction using Euclidean algorithm}
+In this section we start by introducing the M-char inverse theorem using an example. Set $m = 4$ and take the set $\mathcal{A}_4$ (as introduced in the introduction in Section 1). Take the ordered base of all capital letters in the English alphabet $ \mathcal{B} = \{ A, B, C, \ldots, Z \}.$ Since $ B$ is finite and no elements repeats, there is a bijection $ \mathcal{Z} : \{1, 2, \ldots, |\mathcal{B}|\} \to \mathcal{B} $. Thus, $ \mathcal{Z}^{-1}(b) = i $ with $ i$ being unique for each $ b \in \mathcal{B} $. Take the mapping $
+\wp_4 : A_4 \to \mathbb{N}^4
+$ that takes a $4$-character word, say $ b = b_1 b_2 b_3 b_4 $, and maps it to index in $\mathbb{N}^4$ (with each component being less than the cardinality of the base) using the rule
+
+
+\begin{equation}\label{Eq27}
+b = b_1 b_2 b_3 b_4 \mapsto \left(Z^{-1}(b_1), Z^{-1}(b_2), Z^{-1}(b_3), Z^{-1}(b_4)\right).
+\end{equation}
+
+Here, $ Z^{-1} $ denotes the inverse of the bijection \( Z \), mapping each character to an index in the base, in this case, $ \{1, \ldots, 26^3\} $. Next, consider that the map $\Gamma$ that takes a $4$-character word to an index in $ \{1, \ldots, |B|^m\} $ using the base formula
+
+
+\begin{equation}\label{Eq28}
+b = b_1 b_2 b_3 b_4 \mapsto \sum_{n=1}^{4} 26^{4-n} \left(Z^{-1}(b_n) - 1\right) + Z^{-1}(b_4).
+\end{equation}
+
+For visual purposes, we display the map
+
+\begin{equation}\label{Eq29}
+\begin{aligned}
+\text{AAAA} &\to 26^3(0) + 26^2(0) + 26^1(0) + 1 = 1, \\
+\text{AAAB} &\to 26^3(0) + 26^2(0) + 26^1(0) + 2 = 2, \\
+&\vdots \\
+\text{AABA} &\to 26^3(0) + 26^2(0) + 26^1(1) + 1 = 27, \\
+&\vdots \\
+\text{ZZZZ} &\to 26^3(25) + 26^2(25) + 26^1(25) + 26 = 26^4.
+\end{aligned}
+\end{equation}
+
+Now consider the intermediate mapping $ \wp_4$ (the intermediate inverse)
+
+\begin{equation}\label{Eq30}
+\wp_4(x) =
+\begin{cases}
+(1, 1, 1, x) & \text{if } 1 \leq x \leq |\mathcal{B}|, \\
+(1, 1, q+1, r) & \text{if } |\mathcal{B}| < x \leq |\mathcal{B}|^2, x = q|\mathcal{B}| + r, \\
+(1, 1, |\mathcal{B}|, |\mathcal{B}|) & \text{if } x = |\mathcal{B}|^2, \\
+(1, q+1, k+1, l) & \text{if  $|\mathcal{B}|^2 < x \leq |\mathcal{B}|^3$ with $x = q|\mathcal{B}|^2 + r,  r = k|\mathcal{B}| + l$}, \\
+ (1, |\mathcal{B}|, |\mathcal{B}, \mathcal{B}|) & \text{if  $x = |\mathcal{B}|^3$}, \\
+(h+1, q+1, f+1, l) & \text{if  $|\mathcal{B}|^3 < x \leq |\mathcal{B}|^4, \ x = h|\mathcal{B}|^3 + r,~~ r = q|\mathcal{B}|^2 + k,~~ k = f|\mathcal{B}| + l$} \\
+(|\mathcal{B}|, |\mathcal{B}|, |\mathcal{B}|, |\mathcal{B}|) & \text{if $x = |\mathcal{B}|^4$}.
+\end{cases}
+\end{equation}
+
+Then take $\Gamma^-:~\{1,2,\cdots, |\mathcal{B}|^4\}\rightarrow \mathcal{A}_4$ defined as 
+
+\begin{equation}\label{Eq31}
+x\mapsto \sum_{j=1}^{4}{\mathcal{Z}(\wp_4(x)_j)}
+\end{equation}
+
+where $\mathcal{Z}$ takes in an index and maps to a letter $\{A,B,C,\cdots,Z\}$. The large sigma operator $\Sigma$ takes in an  element from $\{A,B,C,\cdots,Z\}$ and concatenates it with another string (adding string $A+A = AA$). Similarly, $\wp(x)_j$ denotes the $j^{th}$ coordinate of the vector $\wp_4(x)$. As an example, take $x=26=26\cdot 1+1$ and examine 
+
+\begin{equation}\label{Eq32}
+x\mapsto (1,1,q+1,r+1)= (1,1,1+1,1) = (1,1,2,1) \mapsto AABA.
+\end{equation}
+
+Similarly, when $x=677$ we have 
+  
+  \begin{equation}\label{Eq33}
+  677 = 26^2\cdot 1+1 \mapsto (1,2,1,1) \mapsto ABAA . 
+  \end{equation}
+  
+  We suspect $\Gamma$ is the inverse of $\Gamma^-$ for each different string of length $m$. We start with the following lemma.
+
+\begin{lemma}\label{lem1}
+Let $m\in \mathbb{N}$ with $m>1$ and let $\mathcal{Z}:~ \{1,2,\cdots, \mathcal{B}\}\rightarrow \mathcal{B}$ denote any bijection with inverse $\mathbb{Z}^{-1}$. The map $\Gamma:~\mathcal{A}_m\rightarrow \{1,2,3,\cdots, |\mathcal{B}|^m\}$ defined by the rule 
+
+\begin{equation}\label{Eq34}
+b_1b_2 \cdots b_m \mapsto \biggl(\sum_{n=0}^{m-1}{|\mathcal{B}|^{m-n}\biggl(\mathcal{Z}^{-1}(b_n)-1\biggr)}\biggr)+ \mathcal{Z}^{-1}(b_m)
+\end{equation}
+
+is a bijection. 
+
+\begin{proof}
+First let $a,b\in \mathbb{A}_m$. Assume $\Gamma(a) = \Gamma(b)$ the immediately
+
+\begin{equation}\label{Eq35}
+\begin{split}
+\sum_{n=0}^{m-1}{|\mathcal{B}|^{m-n}\biggl(\mathcal{Z}^{-1}(a_n)-1\biggr)} & = \sum_{n=0}^{m-1}{|\mathcal{B}|^{m-n}\biggl(\mathcal{Z}^{-1}(a_n)-1\biggr)}\\
+& \Downarrow\\
+\sum_{n=0}^{m-1}{\biggl((\mathcal{Z}^{-1}(a_n)-1)+ \mathcal{Z}^{-1}(b_n)-1\biggr)} & = 0\\
+& \Downarrow\\
+(\mathcal{Z}^{-1}(a_n)-1)+(\mathcal{Z}^{-1}(b_n)-1) & = 0  \indent \forall~~n\in \{1,2,\cdots,m\}\\
+&\Downarrow\\
+a_n & = b_n \indent \forall~~n\in \{1,2,\cdots,m\}
+\end{split}
+\end{equation}
+
+Next, choose arbitrary $b\in \{1,2,\cdots, |\mathcal{B}^m|\}$. We must show that there exist an $a$ such that $\Gamma(a) = b$. We break it up into cases and use the Euclidean algorithm. For arbitrary $b>|\mathcal{B}|$ consider the sequence $\{q_1,q_2,\cdots, q_{m-1}\}$ determined by solving the following set of equations: 
+
+
+\begin{equation}\label{Eq36}
+\begin{cases}
+b = q_1 |\mathcal{B}|+r_1& \text{If $|\mathcal{B}|<b\le \mathcal{B}^2$}\\
+b= q_1|\mathcal{B}|^2+r_1, r_1 = q_2|\mathcal{B}|+r_2 & \text{If $|\mathcal{B}|^2<b\le |\mathcal{B}|^3$}\\
+& \vdots\\
+b = q_1|\mathcal{B}|^{m-1}+r_1, r_1 = q_2|\mathcal{B}|^{m-2}+r_2, r_3 = q_3|\mathcal{B}|^{m-3}+r_3, \cdots r_{m-1} = q_m|\mathcal{B}|+r_k
+\end{cases}
+\end{equation}
+
+with 
+
+\begin{equation}\label{Eq37}
+k = \textbf{Max}\biggl(\biggl\{n: |\mathcal{B}|^n\le b\le |\mathcal{B}|^{n+1}\}\biggr).
+\end{equation}
+
+Allow one to set $s=r_k$ and consider the intermediate mapping $\wp:~ \mathbb{N}\rightarrow \mathbb{N}^m$ defined as
+
+
+\begin{equation}\label{Eq38}
+b\mapsto 
+\begin{cases}
+\biggl(\underbrace{1,1,\cdots, }_{m-1 times} b\biggr)& \text{If $1\le b\le |\mathcal{B}|$}\\
+\biggl(\underbrace{1,1,1,\cdots }_{m-2~times}, q_1+1, s\biggr) & \text{If $|\mathcal{B}|< b< |\mathcal{B}|^2$}\\
+\biggl(1,1,1,\cdots, |\underbrace{\mathcal{B}|, |\mathcal{B}|}_{2-times}\biggr) & \text{If $b= |\mathcal{B}|^2$}\\
+\vdots & \vdots\\
+\biggl(q_1+1,q_2+1,q_3+1,\cdots, q_m+1, s\biggr) & \text{If $|\mathcal{B}|^{m-1}<b< |\mathcal{B}|^m$}\\
+\underbrace{\biggl(|\mathcal{B}|, |\mathcal{B}|, |\mathcal{B}|, \cdots, |\mathcal{B}|\biggr)}_{m-times} & \text{If $b=|\mathcal{B}|^m$}
+\end{cases}
+\end{equation}
+
+then $\Gamma(a) = b$ (recall if the parameter of $\Sigma$ is a string, it concatenates them together to produce a larger string)
+\end{proof}
+\end{lemma}
+
+\begin{theorem}($M$-char Inversion Theorem)\label{Thm1}
+Set $m\in \mathbb{N}$, $\mathcal{B}=\{A,B,C,\cdots, Z\}$, and let $$\mathcal{Z}:~\{1,2,\cdots, |\mathcal{B}|\}\rightarrow \mathcal{B}$$ denote any bijection with inverse $\mathcal{Z}^{-1}$. Define the map $\wp_m~:\mathbb{N}\rightarrow \mathbb{M}^m$ using the definition 
+
+\begin{equation}\label{Eq39}
+n\mapsto 
+\begin{cases}
+(1,1,\cdots, n) & \text{If $1\le n\le |\mathcal{B}|$}\\
+(1,1,\cdots,1,q_1+1, s) & \text{If $|\mathcal{B}|<n<\mathcal{B}^2$}\\
+(1,1,1,\cdots, |\mathcal{B}|, |\mathcal{B}|) & \text{If $n= |\mathcal{B}|^2$}\\
+\vdots &\\
+(q_1+1,q_2+1,q_3+1, q_{m-1}+1, s) & \text{If $|\mathcal{B}|^{m-1}<n<|\mathcal{B}|^m$}\\
+(|\mathcal{B}|, |\mathcal{B}|, |\mathcal{B}|, \cdots, |\mathcal{B}|) & \text{ If $n=|\mathcal{B}|^m$}
+\end{cases}
+\end{equation}
+with $q_j:~\{1,2,\cdots, m-1\}\rightarrow \{0,1,2,\cdots, (|\mathcal{B}|-1)\}$ being the sequence $\{q_1,q_1,\cdots, q_{m-1}\}$ determined by solving the following set of equations via the Euclidean algorithm 
+
+
+\begin{equation}\label{Eq40}
+\begin{cases}
+n = q_1 |\mathcal{B}| + r_1 & \text{if } |\mathcal{B}| < n \leq \mathcal{B}^2 \\
+n = q_1 |\mathcal{B}|^2 + r_1, \, r_1 = q_2 |\mathcal{B}| + r_2 & \text{if } |\mathcal{B}|^2 < n \leq \mathcal{B}^3 \\
+\vdots & \vdots\\
+n = q_1 |\mathcal{B}|^{m-1} + r_1, \, r_1 = q_2 |\mathcal{B}|^{m-2} + r_2, \, \cdots, r_{m-1} = q_{m} |\mathcal{B}| + r_m & \text{if } |\mathcal{B}|^{m-1} \leq n \leq |\mathcal{B}|^m
+\end{cases}
+\end{equation}
+
+with $k=\textbf{Max}\biggl(\biggl\{n: |\mathcal{B}|^n\le b\le |\mathcal{B}|^{n+1}\}\biggr)$. Then the mapping $\Gamma~:~\mathcal{A} \rightarrow\{1,2,\cdots, |\mathcal{B}|^m\}$
+
+
+\begin{equation}\label{Eq41}
+n\mapsto \sum_{j=1}^{m}{\mathcal{Z} \biggl(\wp(n)_j\biggr)}
+\end{equation}
+
+is the inverse of $\Gamma^{-1}~:~ \mathcal{A}_m\rightarrow \{1,2,\cdots,|\mathcal{B}|^m\}$ defined by the rule 
+
+\begin{equation}\label{Eq42}
+b = b_1b_2\cdots b_m \mapsto \sum_{n=1}^{m-1}{|\mathcal{B}|^{m-n}\biggl(\mathcal{Z}^-(b_n)-1\biggr)}+\mathcal{Z}^{-}(b_m)
+\end{equation}
+\end{theorem}
+
+\section{Creating $|\mathcal{B}|^{m-1}$ transformations}
+In this section, we introduce an efficient method to generate enough string characters in order to establish the necessary bijection for the decryption process. Technically, regardless of whether or not one has established a bijection, the data gathered from reducing the base 64 string will be the same even if the$ M$-char reduction mapping is not surjective; we just need to make sure every $M$-char is mapped to some element that is a $1$-char. We consider a set of points in the cross-section of a Trefoil knot 
+
+\begin{equation}\label{Eq43}
+\mathcal{T}_0 = \biggl\{(x(t),y(t)): x(t) = \sin(t)+2\sin(2t),~~y(t) = \cos(t)-2\cos(2t), ~t\in [0,2\pi]\}.
+\end{equation}
+
+We define the set of $\mathcal{B}^{m-1}$ transformations using a coordinate transformation mapping 
+
+\begin{equation}\label{Eq44}
+\mathcal{T}_k =\biggl\{\textbf{v}:~ \textbf{v}= \dfrac{1}{k+1}\textbf{a}, ~\textbf{a}\in \mathcal{T}_0 \biggr\}, \indent k\ge 1.
+\end{equation}
+
+We start with a mesh of $2000$ points in the interval $0,2\pi]$
+
+\begin{equation}\label{Eq45}
+\mathcal{T}^{\prime}:= \{\dfrac{2\pi z}{2000}:~ z\in \{0,1, 2,\cdots, 1999\}\}.
+\end{equation}
+
+The set of points 
+
+\begin{equation}\label{Eq46}
+\biggl\{(x(t),y(t)):~ t\in \mathcal{T}^\prime\biggr\}
+\end{equation}
+
+is compacted to a canvas and we draw a symbol using a \textit{strait-line} method from point $(x(t_i),y(t_i))$ to $(x(t_{i+1}),y(t_{i+1}))$. Then, we further save each symbol as a 1-char string, similar to how Unicode is created. This method avoids manually initiated a an array of different symbols available from the unicode library. 
+
+\section{Applying the Owlpha loop and vertical bar}
+We have thus far discussed the $M$-char technique to reduce particular substring of a large string that is in base $64$. Next, we will discuss the addition of the Owlpha loop technique which we must take into account three new characters namely $[$, \$, and the vertical bar $\vert$. Again, we start with an example and then re refine the technique using more mathematical details. 
+
+\begin{example}\label{Ex4}
+Set $\Sigma = 1234AbCXYZghI1234AbCXYZghI1234AbCXYZghI1234AbCXYZghI$ which is the substring $1234AbCXYZghI$ concatenated four times together to make $\Sigma$. We use the dollar symbol \$ to indicate the start and ending point of the loop inside our string i.e 
+
+\begin{equation}\label{Eq47}
+\begin{split}
+\Sigma & = 1234AbCXYZghI1234AbCXYZghI1234AbCXYZghI1234AbCXYZgh\\
+& = [4\$1234AbCXYZghI]
+\end{split}
+\end{equation} 
+
+The number between the characters $[$ and the first dollar sign \$ indicate how many loops the string has (the number of concatenations) and the string between the dollar signs indicates which string the loop is being applied to. This technique can be applied after the encryption process to help identify patterns in ones data set. Next we illustrate how to use the addition of the vertical bar. 
+\end{example}
+
+\begin{example}\label{Ex5}
+Consider a bijection $\alpha$ from $\mathcal{A}_3 $to any set of symbols $\mathcal{C}\cup \{\triangle\}$ with $|\mathcal{C}| = 26^3-1=17,575$ elements but has the restriction that $\alpha(CVI) = \vartriangle$. Similarly, consider a bijection $\gamma$ from $\mathcal{I}_3$ to the set $\mathcal{j}\cup \{\sharp\}$ such that $|\mathcal{J}| = 10^3-1=999$ with the restriction that $\gamma(123) = \sharp$. Set 
+
+
+\begin{equation}\label{Eq48}
+\begin{split}
+\Sigma & = \underbrace{ij+1234AAAAAAAAAACVIjLi+1234AAAAAAAAAACVIjLi}_{\text{Apply owlpha loop at $44-chars$}}\\
+& = \underbrace{ij[2\$+1234AAAAAAAAAACVIjLi\$}_{\text{Apply vertical bar at 27 chars }}\\
+& = \underbrace{ij[2\$+\sharp 4 \sim 10\vert ACVIjLi\$}_{17-chars}
+\end{split}
+\end{equation} 
+
+The vertical bar can be applied before or after the Owlpha loop it helps to reduce strings that have repeating chars going from left to right. Similarly, the Owlpha loop can be applied before one encrypts there data into new symbols using the necessary bijections or after the choice is up to the programmer, but it appears it might be better to do it before hand. In our approach we are applying the owlpha loop after we encrypt into new symbols. One needs the symbol $\sim$ to identify the loop count.  One does not need an additional character to represent the end of the loop for the bar $\vert$ since it only reduces 1-char sub-strings. So $4\sim 10\vert ACV$ will always equate to be $4\sim 10\vert ACV = 410AAAAAAAAAAAACV$. The character $\sim$ is used to identity the separation from the number which identifies the vertical number applications versus a integer char in the actual string we are reducing. We re-iterate that this technique can be applied before or after we encrypt our data into new symbols. In this particular example we can still apply our bijection method to the subsets $\{123\} ,\{CVI\}$ and reduce both of these into $1$-char strings. It is best to use it on a 1-char reduced $M$-char string (a string of base $64$ that has been reduced to a $1$-char symbol). \\
+
+\end{example}
+
+\textbf{Owlpha loop technique}: let $\Sigma$ denote a string in base $64$. Assume there exist a substring $\sigma \in \Sigma$ with length $\epsilon$ inside $\Sigma$ that is repeating $n-times$
+
+
+\begin{equation}
+\label{Eq49}
+\underbrace{\sigma\sigma\cdots\sigma}_{n-times}
+\end{equation}
+
+but is also reducible using a $\epsilon$-char reduction inverse meaning $\sigma \in \mathcal{S}_\epsilon \cup \mathcal{L}_{\epsilon}\cup \mathcal{I}_\epsilon$ then $\Sigma$ must satisfy one of the three equations 
+
+
+\begin{equation}\label{Eq50}
+\begin{split}
+\Sigma & = s\mathcal{F}(\mho_\epsilon(\sigma),n)r\\
+\Sigma & = \mathcal{F}(\mho_\epsilon(\sigma),n)r\\
+\Sigma & = \mathcal{F}(\mho_\epsilon(\sigma),n)
+\end{split}
+\end{equation}
+
+for some sub-strings $s$ and $r$ (depending on if there exist strings in the front and the back of the pattern that was detected) with $\mathcal{F}$ that mapping that takes $\sigma$ and concatenates it $n$-times using the $\mho$ inverse 
+
+\begin{equation}\label{Eq51}
+(\sigma,n)\mapsto 
+[n\$ \mho_\epsilon(\sigma)\$
+\end{equation}
+
+\textbf{Vertical Bar Technique:} Let $\Sigma$ denote a string in base $64$. Assume there exist a substring $\sigma\in \Sigma$ strictly a $1$-char repeating pattern inside of $\Sigma$. Then $\Sigma$ must satisfy one of the three equations 
+
+\begin{equation}\label{Eq52}
+\begin{split}
+\Sigma & = s\mathcal{G}(\sigma,n)r\\
+\Sigma & = \mathcal{G}(\sigma,n)r\\
+\Sigma & = \mathcal{G}(\sigma,n)\\
+\end{split}
+\end{equation}
+
+for some sub-strings $r,s\in \Sigma$ (possibly the same) and $\mathcal{G}$ is the mapping that takes $\sigma$ and  a value $n$ and then maps it to a $(n+3)$-char string 
+
+\begin{equation}\label{Eq53}
+(\sigma,n) \mapsto \sim  n \vert \sigma
+\end{equation}
+
+the symbol $\sim$ is used to separate the integer $n$ representing the repeating loop count from any other char in the string $\Sigma$. 
+
+\section{Results and Data}
+In this section, we attach and report the results we found for our implementation of the base $64$ finite compression algorithm using a $3$-char, $4$-char, and $5$-char reduction technique via \textcolor{blue}{\href{https://github.com/bursonskullz/base64Compresssion}{Github}}. Currently the algorithm is experiencing some "minor" issues while the symbols are being drawn, we have detected that they are not being made uniquely using the intersection tool.  To compensate for this, we have commented out this portion of the code and are now currently using Unicode testing when the modulus $m = 3$. Moreover, we might refine the algorithm so that notation is consistent with the work produced herein. This section will be updated when the code is fully complete. As for the time being, we not that the compression tool is functioning when we use a unique subset of Unicode symbols, but it does not work properly when we attempt to create our own symbols. We have failed to do this correctly. We state that we have successfully conducted a $5$-char reduction technique because it does not matter if the strings that we created and mapped to are unique or not since the data will not change in this case. We have successfully created $2665$ symbols, but we have detected that they are not unique. Thus, we are converting to a transformation of Trefoil knots; in previous applications, we were using spirals with increasing angles. The symbols only need to be unique for the decompression tool to work properly; this does not significantly affect the results that one can gather. We are currently working on fixing this issue by testing with various different Unicode symbols to ensure it works properly before attempting to create our symbols. The algorithm is robust, allowing the user to call it with their own symbols inside an array. The main compression function is titled \textbf{BursonBase64Encrypted()} and the decompression tool is titled \textbf{BursonBase64Decrypt()}. For any application, we recommend using the function \textbf{getModCharInverse()} to increase the speed of creating the inverse map for the three sets of data that one needs, as it can be used  on all three sets and also called in the same loop while initializing their own symbols. One does not need to add an additional loop to create the inverse set; our code will automatically create it if one calls it properly and pushes the inverse symbol data created directly under where they append to the array storing their own unique symbols. The function \textbf{getModCharInverse()} takes in the index of your inverse array, the modulus, and the base set. For example, set your base to $\mathcal{B} = \{A,B,C, \cdots, Z\} = "ABC \cdots  Z"$ as an ordered string, and our function produces the result 
+
+
+\begin{equation}\label{Eq54}
+\begin{split}
+\textbf{getModCharinverse}(1,4, \mathcal{B}) & = "AAAA"\\
+\textbf{getModCharinverse}(2,4, \mathcal{B}) & = "AAAB"\\
+\textbf{getModCharinverse}(1,5, \mathcal{B}) & = "AAAAA"\\
+\textbf{getModCharinverse}(26^5-1,5, \mathcal{B}) & = "ZZZZZ"
+\end{split}
+\end{equation}
+
+We are currently calling it inside the same loop where we assign the Unicode to the array, and it is giving consistent inverse results for both our main set and our permutation set (but it returns a string representation, i.e., $101010$ for our permutation $(1,0,1,0,0)$, which can easily be applied to our reduced symbol in $\mathcal{A}_5$). The algorithm can easily be adapted inside any code to create inverses of many arrays regardless of the data type.
+ 
+ 
+ \begin{table}[h!]
+\centering
+\caption{Results using $3$-char reduction on sample data.}
+\begin{tabular}{@{}cccc@{}}
+\toprule
+\textbf{Test} & \textbf{Encrypted Length} & \textbf{Base 64 Length} & \textbf{Decrease Amount} \\ \midrule
+1             & 1540                   & 3085                      & 2.003                    \\
+2             & 1594                   & 3335                      & 2.105                    \\
+3             & 2351                   & 4650                      & 1.978                    \\
+4             & 2703                   & 5493                      & 2.032                    \\
+5             & 2918                   & 5814                      & 1.992                    \\
+6             & 3281                   & 6650                      & 2.027                    \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Results using $4$-char reduction on sample data.}
+\begin{tabular}{@{}cccc@{}}
+\toprule
+\textbf{Test} & \textbf{Encrypted Length} & \textbf{Base 64 Length} & \textbf{Decrease Amount} \\ \midrule
+1             & 237                    & 864                      & 3.64                     \\
+2             & 466                   & 1499                       & 3.217                    \\
+3             & 459                   & 1149                       & 2.503                    \\
+4             & 183                   & 1169                       & 6.388                    \\
+5             & 481                   & 1863                       & 3.873                    \\
+6             & 836                    & 2556                       & 3.057                    \\ \bottomrule
+\end{tabular}
+\end{table}
+
+ \section{Future Work}
+ 
+ Any future work that attempts to enhance the algorithm introduced in this work needs to increase the modulus from a $5$-char reduction to a $6$-char or $7$-char reduction and possibly above, as we have already been able to gather data from this range of modulus. We are unsure exactly how many unique string characters we can physically create and compact to a $1$-char string; this needs further investigation. Moreover, the method we use to organize the sets that we perform the reduction on is allowed to be arbitrary, as long as we preserve the order and only perform a reduction mapping on elements that are the same modulus as m. In fact, many times under the application of the algorithm, there exist sets that cannot be organized easily with $m-1$ or $m-\epsilon$ (for $1\le \epsilon \le m-1$)  elements inside. For each $m$, one can also reduce each set that has less cardinality than $m$ itself. The number of elements we need to perform the reduction technique is given by the formula
+ 
+ \begin{equation}\label{Eq55} 
+ f(m) = 26^m+ 10^m + (2^m-2) + 5.
+ \end{equation}
+
+Namely, $26^m$ elements to reduce a string $a\in \mathcal{A}_m$ since each character can corresponding to exactly one of the elements in $\{1,2,\cdots, \mathcal{B}= |26|\}$. Similarly, $10^3$ unique elements to reduce integer sub-strings strictly in $\mathcal{I}_m$. Additionally, one needs to create the permutations symbols (excluding the vectors will all $1$'s or zeros in the components) and there are precisly $2^m-2$ of them. Lastly, one needs to introduce the symbols $\{ \sim, [, \$ , ~\texttt{\^{}} \}$  to perform the Owlpha loop, vertical bar technique, and to identity all lower case strings respectfully. Instead of mapping the chunks with $m-\epsilon$ length to the identity map, if one wants to reduce all the organized subsets of a string $\Sigma$ then the algorithm need to efficiently create $\lambda(m)$ elements with 
+
+\begin{equation}\label{Eq56}
+\lambda(m) := \sum_{i=1}^{m}{f(i)-5}+5 = \biggl(\sum_{i=1}^{m}{26^i+10^i}\biggr)-2m+5
+\end{equation}
+
+one can easily see this because for each set of unique symbols, say $\mathcal{O}_j$, that one needs to create, the cardinality must satisfy $|\mathcal{O}_i|\ge f(i) $ and $\mathcal{O}_i\cap \mathcal{O}_j$ for any $i\neq j$ and $1\le j\le f(m)-5$. One needs $10^m$ elements to reduce string chunks of length $m$ that are strictly integers since these characters are in base $10$ and then one needs $2^m-2$ unique permutation symbols in $\mathcal{P}_m$ to permute each element in $\mathcal{A}_m$ besides all capital or lower case symbols. We need the the five symbols $\{ \sim,~ [,~ \$,~ \texttt{\^{},~}, \vert \}$. The prime symbol $\texttt{\^{}}$ indicating lower case string combinations when attached to the right side of a element in the image of the map $\alpha_m$ with $\sim$ separating an encrypted number from a reduced pattern (i.e $5\sim 10\vert \gamma = 5\gamma\gamma\gamma\gamma\gamma\gamma\gamma\gamma\gamma$ ) and also the dollar symbol \$ and $[$ to perform the Owlpha loop technique.  It is ideal for the algorithm to build $\lambda(m)$ unique Trefoil knots or other symbol each being unique that one can store in multiple arrays (as the maximum array size will fill up rather quickly), and then the case statements need to be altered in a fashion so that one does not have to manually set the data from the modulus, but rather only change the modulus and gather results. 
+
+\section{Conclusion}
+This algorithm was initially built intending to reduce a set of one thousand base $64$ images that will be saved to a $ERC1155$ block chain contract representing $NFT$ tokens. Our intention is not to change or alter our allotted $5102MB$ limitation but rather use the M-char reduction technique introduced in this work to compress the data and after convert it by saving the existing data onto our contract rather then to our existing database to save production cost. We have successful outlined and performed the base 64 reduction technique introduced in this work on sample and real existing string data using a $M$-char reduction technique as well as provided the necessary mathematical framework necessary to formally introduce our technique. The technique outlined in this work can be used on any data set to reduce the current amount of storage inside a database or on a block chain contract (which can hold the data instead which reduced production cost long term). Moreover, we have also outlined and discussed methods to enhance the algorithm. Ultimately, this works e effectively shows their is a need to study and enhance the algorithm we provided to increase the amount of data that one can store rather then enhancing than technology that stores the data. There are many practical application of the $M$-char reduction technique including (but are not limited to) sending more data through satellites, storing more data in a database or block chain contract, possibly speeding up calculating and more.
+
+\end{document}
+
+
+
