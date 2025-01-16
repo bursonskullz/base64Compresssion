@@ -10,7 +10,8 @@ Notes:
        There seems to be an overrlapping between chineese and japanese symbols in unicode. Currently the code sets the integer reduction map using emojie symbols. 
        Unicode symbols contains enough chars to accuratly test the code without the need to make our own set of trifold knots (which will be implemnted later).
        Recall we need 26^m elements to recuce strings in A_m, 10^m symbols to reduce strings in I_m, and 2^m-2 elements to reduce an element in P_m (a perumation vector). 
-
+       The permuations should not contain (0,0,0,...,0) or (1,1,1,...,1).
+       
     2) Ensure compressor is accuratly mapping to the correct functions alpha, beta, gamma, delta or identity in appropriate cases. One may need fix the notation to
        maintain constistancy with the paper being produced. 
 
