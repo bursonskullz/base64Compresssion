@@ -478,7 +478,8 @@ function separateIntoBestChunk(base64String, chunkLength) {
 }
 
 function setUniquePermutationMapping(modulus) {
-    // use index formula to set permutation depending on index 
+    // Use index formula to set permutation depending on index 
+    // The permuations should not contain (0,0,0,...,0) or (1,1,1,...,1) double check. Currently its printing one of them so there must be mistake. 
     let khmerChars = [];  
     let base = "01";
     const start = 0x1780; 
