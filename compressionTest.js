@@ -1,13 +1,28 @@
 // Author: Roy Burson 
-// purpose: Finish base 64 finite compression algorithm taken from website design 
-// Date: janurary 3rd, 2025 
+// purpose: Finish Base 64 Finite Compression Algorithm Taken from Website Design for Publication Consideration.
+// Date: Janurary 16, 2025 
 
-const bursonCryptopgraphy = require('./base64Encryption.js');
+/*
+Notes:
 
-// Verify the imported object:
-console.log(bursonCryptopgraphy);
-console.log('initializing data . . .');
+    1) Make sure elements are being made uniquely the intersection must be empty see Eq.(12) in the paper and refer to checkIntersection() and hasDuplicates() functions.  
+       The code should not attempt to reduce a string Y if it detects that the symbols are not being created uniquely and have precisly the number of elements we need.
+       There seems to be an overrlapping between chineese and japanese symbols in unicode. Currently the code sets the integer reduction map using emojie symbols. 
+       Unicode symbols contains enough chars to accuratly test the code without the need to make our own set of trifold knots (which will be implemnted later).
+       Recall we need 26^m elements to recuce strings in A_m, 10^m symbols to reduce strings in I_m, and 2^m-2 elements to reduce an element in P_m (a perumation vector). 
 
+    2) Ensure compressor is accuratly mapping to the correct functions alpha, beta, gamma, delta or identity in appropriate cases. One may need fix the notation to
+       maintain constistancy with the paper being produced. 
+
+    3) Ensure the decompressor is accuralty decompressing the original string (we should get back the exact string we initially tried to compress)
+       Make a loop to test an array full of random strings to esnure accurate results hold. 
+
+    4) After step (1)-(3) start to create our own unique sets of symbols using Trifold knots instead of using the available unicode
+       The symbols can also be stored on a solidity contract and pulled so that they never change over time for production purposes (this is being considered as an option).  
+*/
+
+const bursonCryptopgraphy = require('./base64Encryption.js'); // Import functions from file into object. 
+console.log(bursonCryptopgraphy); // Verify the imported object:
 
 global.uniqueChars = [];
 global.uniqueChars2 = [];
@@ -15,23 +30,17 @@ global.uniqueChars3 = [];
 
 let mainBase = 26; 
 let digitBase = 10;
-let modulus = 3;  // to implement 5-char or 6 char increase here. May experience memory issues. 
+let modulus = 3;  //  Modulus determines reducible string length and number of elements needed during the initilization process (May experience memory issues for large  values). 
 let mainAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const startTime = performance.now();
+const startTime = performance.now(); // Starts a timer to check how long it took to initilize symbols used during reduction process 
 
 
 
-let customSymbolArray = bursonCryptopgraphy.setMainUniquebaseCharMapping(modulus, mainAlphabet); // this creates as many symbols as we need but will fail when modulus is to large i.e 6-8
-const endTime = performance.now();
-const duration = endTime - startTime;
-
-
-console.log(`Initializing base set symbols time:  ${duration.toFixed(2)} milliseconds.`);
+let customSymbolArray = bursonCryptopgraphy.setMainUniquebaseCharMapping(modulus, mainAlphabet); // retruns the set of symbols used to reduce strings in A_m (strictly caps and alhabetical)
 let kmferChars = bursonCryptopgraphy.setUniquePermutationMapping(modulus);
-console.log('setting unique digit mapping');
 
 
-let japaneseChars = bursonCryptopgraphy.setUniqueDigitCharsMapping(modulus, digitBase); // returns inverse of the set I_m
+let japaneseChars = bursonCryptopgraphy.setUniqueDigitCharsMapping(modulus, digitBase); // returns the set of symbols used to reduced integer strings using the modulus 
 uniqueChars = customSymbolArray;
 
 for (const kmferChar of kmferChars) {
@@ -41,37 +50,40 @@ for (const jChar of japaneseChars) {
     uniqueChars3.push(jChar);
 }
 
-console.log(`inverse of ${modulus}-char base map`, uniqueCharsInverse); // has been verified uncomment to check again
-console.log('inverse permutations ', uniqueChars2Inverse); // has been verified uncomment to check again
-console.log(`unique set of symbols to reduce A_${modulus}` , uniqueChars); // has been verified uncomment to check again
-console.log(`unique set of permutation symbols P_${modulus}` , uniqueChars2); // has been verified uncomment to check again
-console.log(`unique set of symbols to reduce I_${modulus}`, uniqueChars3); // has been verified uncomment to check again
+const endTime = performance.now(); 
+const duration = endTime - startTime;
+console.log(`Finite Initializing Time:  ${duration.toFixed(2)} milliseconds.`); 
 
-const ifA_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars);
-const ifI_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars2);
-const ifP_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars3);
+console.log(`Inverse of ${modulus}-char base map`, uniqueCharsInverse); // Prints global object containing inverse of base map to A_m 9 (which are alphabetical strings of length m that have all capital case chars).
+console.log('Inverse permutations ', uniqueChars2Inverse); // Prints global object containing inverse of integer mapping I_m (which are strings of length m that contain only integers).
+console.log(`Unique set of symbols to reduce A_${modulus}` , uniqueChars);  // Print the set of symbols used to reduce strings in A_m.
+console.log(`Unique set of symbols to reduce P_${modulus}` , uniqueChars2); // Print the set of symbols used to reduce permuation symbols (should be 2^m-2 of them).
+console.log(`Unique set of symbols to reduce I_${modulus}`, uniqueChars3);  // Print the set of symbols used to reduce string of length m containing only integers. 
 
-let intersection = bursonCryptopgraphy.checkIntersection();// has not been verified 
+const ifA_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars);  //  checks the array uniqueChars has no repeated elements 
+const ifI_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars2); //  checks the array uniqueChars2 has no repeated elements
+const ifP_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars3); //  checks the array uniqueChars3 has no repeated elements
 
-var base64TestString = `data:image/png;base64, 123456789`; // test string (edit here for results);
+let intersection = bursonCryptopgraphy.checkIntersection(); // has not been verified but purposes is to check if the intersecion of A_m, I_m, and P_m is empty.
+var base64TestString = `data:image/png;base64, dehbddhbebhehdh737377jnDND82HHH3u3udgGGGGGHH2hh2h2bhbehbeb`; // Edit string here to test and gather results. 
 
 if(uniqueChars.length >= mainBase**modulus && !ifA_mHasDuplicate && !ifI_mHasDuplicate && !ifP_mHasDuplicate && intersection){
     console.log('calling compressor using unique set of symbols generated with length:', uniqueChars.length);
-    console.log(`Calling burson encryption using a ${modulus}-char reduction technique`);
-    const encryptedStringTest = bursonCryptopgraphy.BursonBase64Encrypted(base64TestString, modulus);
+    console.log(`Calling Burson Encryption using a ${modulus}-char reduction technique`);
 
+    const encryptedStringTest = bursonCryptopgraphy.BursonBase64Encrypted(base64TestString, modulus);
     let stripped = base64TestString.replace(/^data:image\/[a-z]+;base64,/, ''); // must strip before performing calculation to be accurate
     console.log(`Compression amount = ${(stripped.length/encryptedStringTest.length).toFixed(3)}x`);
-    const decryptionTestStringTest = bursonCryptopgraphy.BursonBase64Decrypt(encryptedStringTest, modulus);
 
+    const decryptionTestStringTest = bursonCryptopgraphy.BursonBase64Decrypt(encryptedStringTest, modulus);
     console.log('decryptedString length', decryptionTestStringTest.length);
-    console.log('Image base 64 representation after decompression', decryptionTestStringTest);
+    console.log('Base 64 string representation after decompression', decryptionTestStringTest); // this needs to print original string that we passed into the compressor. 
 }else if(ifA_mHasDuplicate || ifI_mHasDuplicate|| ifP_mHasDuplicate){
-    console.warn(`duplicator is true spirals are not unique`, uniqueChars);
+    console.warn(`The code was unable to create the symbols uniquely it detected the duplicator is true`, uniqueChars);
 }else if(!intersection){
-    console.warn(`code detected that the intersection of the three sets we use are not unique (they share an element`);
+    console.warn(`code detected that the intersection of the three sets we use are not unique (they share an element)`);
 }else{
-    console.warn(`Error unique char array length is not long enough `);
-    console.log('unique symbol length for main base:', customSymbolArray.length);
+    console.warn(`Code detected that the uniquechar array length is not long enough `);
+    console.log('Printing length for main base to reduce element in A_m:', customSymbolArray.length);
 }
 
