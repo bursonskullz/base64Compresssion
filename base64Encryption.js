@@ -286,6 +286,7 @@ function getUniquePermutationSymbol(word, khmerChars, modulus) {
         throw new Error(`Word must be exactly ${modulus} characters long.`);
     }
     let permutation = []; const baseLength = 2;
+    //console.log('getting permutation for word', word);
     for(const char of word){
         if(char === char.toUpperCase()){
             permutation.push(1);
@@ -293,16 +294,17 @@ function getUniquePermutationSymbol(word, khmerChars, modulus) {
             permutation.push(0);
         }
     }
-        
-    for(var k =1; k<=permutation.length; k++){
+    //console.log('permutation used for encryption', permutation);
+
+    for (let k = 0; k < permutation.length; k++) {
         let digit = permutation[k];
-        let indexOfDigitInBase = base.indexOf(digit)+1; 
-        if(k!= permutation.length) {
-            calculatedIndex +=baseLength** (modulus-k) * (indexOfDigitInBase -1);
-        }else{
-            calculatedIndex += (indexOfDigitInBase);
-        }
+        let indexOfDigitInBase = base.indexOf(digit) + 1;
+        //console.log('digit of char in permutation and index in base', digit, indexOfDigitInBase);
+
+        calculatedIndex += (baseLength ** (modulus - k - 1)) * (digit); // Fix exponent shift
     }
+    //console.log('permutation index', calculatedIndex);
+
     return khmerChars[calculatedIndex]; 
 }
 
@@ -519,7 +521,7 @@ function setUniquePermutationMapping(modulus) {
 }
 
 function mapCharsToTransformedWord(chineseChar, khmerChar) {
-    let indexOfChineseChar = uniqueChars.indexOf(chineseChar);
+    let indexOfChineseChar = uniqueChars.indexOf(chineseChar)-1;
     const reverseChinaChunk = uniqueCharsInverse[indexOfChineseChar];
     let caseValues = []; 
     let transformedWord = '';
@@ -529,11 +531,17 @@ function mapCharsToTransformedWord(chineseChar, khmerChar) {
     if (typeof reverseChinaChunk !== 'string') {
         throw new Error("Retrieved value is not a string.");
     }
-    const khmerIndex = uniqueChars2.indexOf(khmerChar);
+    const khmerIndex = uniqueChars2.indexOf(khmerChar)-1;
+
     if (khmerIndex === -1) {
         throw new Error("Khmer character not found in uniqueKhmerChars array.");
     }
+
+
     let stringPerm = uniqueChars2Inverse[khmerIndex];
+    console.log('permutation index', khmerIndex);
+    console.log('permutation inverse', stringPerm);
+
     for(var i = 0; i< stringPerm.length; i++ ){
         caseValues.push(parseInt(stringPerm[i]));
     }
@@ -605,7 +613,7 @@ function BursonBase64Encrypted(base64String, modulus) {
             } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
                 let permutationFrontEncryption = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
-                frontEncryption = `${uniqueSymbol}${permutationFrontEncryption}`;
+                frontEncryption = `${permutationFrontEncryption}${uniqueSymbol}`;
             } else if (isStringDigits) {
                 uniqueSymbol = getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
                 frontEncryption = uniqueSymbol;
@@ -633,14 +641,14 @@ function BursonBase64Decrypt(encryptedString, modulus) {
     let decryptedString = ''; 
     let alphabet = `ABCDEFGHIJKLMNOPQRSTUVWXYZ`;
     let encryptedLength = Array.from(encryptedString).length;
-    console.log('Image to decrypt:', encryptedString);
-    console.log('Image length:', encryptedLength);
+    //console.log('Image to decrypt:', encryptedString);
+    //console.log('Image length:', encryptedLength);
     //console.log('Before reversal:', [...encryptedString].map(c => c.charCodeAt(0)));
     encryptedString = reverseOwlphaLoop(encryptedString);
     encryptedString = Array.from(encryptedString); // Properly splits emojis & symbols
     let encryptedLengthOwl = Array.from(encryptedString).length;
-    console.log('Image length after reversing owlphaLoop', encryptedLengthOwl);
-    console.log('Image to decrypt after Owlphaloop:', encryptedString);
+    //console.log('Image length after reversing owlphaLoop', encryptedLengthOwl);
+    //console.log('Image to decrypt after Owlphaloop:', encryptedString);
     //console.log('After reversal:', [...reverseOwlphaLoop(encryptedString)].map(c => c.charCodeAt(0)));
     for (let i = 0; i < encryptedLengthOwl; i++) {
         const char = encryptedString[i];
@@ -690,9 +698,12 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             let decryptedKMFERString = '';
             let index = uniqueChars.indexOf(char) -1;
             let modCharInverse = uniqueCharsInverse[index];
-            if (i != encryptedString.length) {
+
+            if (i+1 < encryptedString.length) {
                 const nextChar = encryptedString[i+1];
+                //console.log('checking char to see if it is a permutation', nextChar);
                 if (isAKMfer(nextChar)) {
+                    //console.log('we found a permutation', nextChar);
                     decryptedKMFERString += mapCharsToTransformedWord(char, nextChar);
                     i += 1;
                 }else if (nextChar === '^') {
@@ -707,11 +718,11 @@ function BursonBase64Decrypt(encryptedString, modulus) {
 
             decryptedString += decryptedKMFERString;
         }else if (isbaseDigit(char) && !isInMainBase(char)) { 
-            //console.log('we found reducible integer chunk', char);
+            console.log('we found reducible integer chunk', char);
             let index = uniqueChars3.indexOf(char)-1;
             decryptedString += index;
         }else if (parseInt(char)) {
-            //console.log('we found a integer', char);
+            console.log('we found a integer', char);
             let integerChunk = '';
             let streamLine = 0;
             let pattern = true;
@@ -736,7 +747,7 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             }
         }else if(char === '~' || char === '^'){
         }else{
-            console.log('everything failed');
+            //console.log('everything failed');
             decryptedString+= char;
         }
     }
