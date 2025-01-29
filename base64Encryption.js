@@ -722,7 +722,7 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             let index = uniqueChars3.indexOf(char)-1;
             decryptedString += index;
         }else if (parseInt(char)) {
-            console.log('we found a integer', char);
+            //console.log('we found an integer', char);
             let integerChunk = '';
             let streamLine = 0;
             let pattern = true;
