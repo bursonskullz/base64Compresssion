@@ -427,6 +427,19 @@ function reverseOwlphaLoop(encryptedString) {
     return intermediateString;
 }
 
+function getBarNumberAttachment(i, encryptedString){
+    let repeatCount = '';
+    for (let j = i - 1; j >= 0; j--) {
+        const previousChar = encryptedString[j];
+        if (!isNaN(previousChar)) {
+            repeatCount = previousChar + repeatCount;
+        } else {
+            break;
+        }
+    }   
+    return repeatCount;
+}
+
 function separateIntoBestChunk(base64String, chunkLength) {
     const chunks = [];
     let buffer = "";
@@ -491,9 +504,9 @@ function setUniquePermutationMapping(modulus) {
         permutationLimit = khmfersLimit; 
     }
 
-    var counter = 0;     
+    var counter = 1;     
     for (let i = start; i <= end; i++) {
-        if (counter >= permutationLimit) {
+        if (counter >= permutationLimit+1) {
             break;
         } else {
             khmerChars.push(String.fromCharCode(i));
