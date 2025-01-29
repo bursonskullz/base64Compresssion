@@ -539,8 +539,8 @@ function mapCharsToTransformedWord(chineseChar, khmerChar) {
 
 
     let stringPerm = uniqueChars2Inverse[khmerIndex];
-    console.log('permutation index', khmerIndex);
-    console.log('permutation inverse', stringPerm);
+    //console.log('permutation index', khmerIndex);
+    //console.log('permutation inverse', stringPerm);
 
     for(var i = 0; i< stringPerm.length; i++ ){
         caseValues.push(parseInt(stringPerm[i]));
@@ -565,7 +565,6 @@ function BursonBase64Encrypted(base64String, modulus) {
     console.log('Image length before compression applied', base64String.length);
     console.log('encryption using chunks', bestChunks);
     console.log('best chunks length (how many loops inside compressor):', bestChunks.length);
-    console.log('Image in base 64):', base64String);
     
     let encryptedString = '';
     let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -592,15 +591,17 @@ function BursonBase64Encrypted(base64String, modulus) {
                 uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 frontEncryption = `~${maxCount}|${uniqueSymbol}^`;
             } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
+                //console.log('Processing chunk:', chunk);
+                let mainBaseSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
-                frontEncryption = `~${maxCount}|${uniqueSymbol}`;
+                frontEncryption = `~${maxCount}|${mainBaseSymbol}${uniqueSymbol}`;
             } else if (isStringDigits) {
                 uniqueSymbol = getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
                 frontEncryption = `~${maxCount}|${uniqueSymbol}`;
             } else {
                 frontEncryption = `~${maxCount}|${chunk}`;
             }
-        } else if (chunk.includes('+') || chunk.includes('-')) {
+        } else if (chunk.includes('+') || chunk.includes('/')) {
             frontEncryption = chunk.repeat(maxCount);
         } else if (maxCount === 1 && chunk.length === modulus) {
             let uniqueSymbol;
@@ -613,6 +614,7 @@ function BursonBase64Encrypted(base64String, modulus) {
             } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
                 let permutationFrontEncryption = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
+                //console.log('Processing chunk for not all capital:', chunk);
                 frontEncryption = `${permutationFrontEncryption}${uniqueSymbol}`;
             } else if (isStringDigits) {
                 uniqueSymbol = getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
@@ -641,58 +643,57 @@ function BursonBase64Decrypt(encryptedString, modulus) {
     let decryptedString = ''; 
     let alphabet = `ABCDEFGHIJKLMNOPQRSTUVWXYZ`;
     let encryptedLength = Array.from(encryptedString).length;
-    //console.log('Image to decrypt:', encryptedString);
-    //console.log('Image length:', encryptedLength);
-    //console.log('Before reversal:', [...encryptedString].map(c => c.charCodeAt(0)));
+    console.log('Image to decrypt:', encryptedString);
     encryptedString = reverseOwlphaLoop(encryptedString);
-    encryptedString = Array.from(encryptedString); // Properly splits emojis & symbols
+    encryptedString = Array.from(encryptedString); 
     let encryptedLengthOwl = Array.from(encryptedString).length;
-    //console.log('Image length after reversing owlphaLoop', encryptedLengthOwl);
-    //console.log('Image to decrypt after Owlphaloop:', encryptedString);
-    //console.log('After reversal:', [...reverseOwlphaLoop(encryptedString)].map(c => c.charCodeAt(0)));
     for (let i = 0; i < encryptedLengthOwl; i++) {
         const char = encryptedString[i];
-        //console.log('we are examining the symbol', char);
-        //console.log(`Checking isbaseDigit(${char}):`, isbaseDigit(char));
-        //console.log(`Checking isInMainBase(${char}):`, isInMainBase(char));
         if (char === '|') {
-            let repeatCount = getBarNumberAttachment(i, encryptedString); 
-            const repeatCountNumber = parseInt(repeatCount) || 1;
-            let nextChar = encryptedString[i + 1]; 
+            // Extract repeat count attached to the bar symbol
+            let repeatCount = getBarNumberAttachment(i, encryptedString);
+            if (repeatCount === undefined || isNaN(parseInt(repeatCount))) {
+                console.log(`Invalid repeatCount extracted: ${repeatCount}, defaulting to 1`);
+                repeatCount = 1;
+            }
+            const repeatCountNumber = parseInt(repeatCount);
+            let nextChar = encryptedString[i + 1]; // The character after the bar
             let decryptedKMFERString = '';
             let newString = '';
+            
+            // Handle if the next character is a valid base character and not a digit
             if (isInMainBase(nextChar) && !isbaseDigit(nextChar)) {
-                if (i != encryptedString.length) {
-                    const getKmferChar = encryptedString[i + 2];
+                if (i + 2 < encryptedString.length) {
+                    const getKmferChar = encryptedString[i + 2]; // Check the third character if it
                     if (isAKMfer(getKmferChar)) {
+                        // If there's a permutation, map the characters and skip the next two characters
                         decryptedKMFERString = mapCharsToTransformedWord(nextChar, getKmferChar);
-                        i += 2;
+                        i += 2;  // Skip both the permutation symbol and the character after it
                     } else {
-                        let index = uniqueChars.indexOf(nextChar)-1;
+                        // If no permutation, just inverse the character
+                        let index = uniqueChars.indexOf(nextChar) - 1;
                         let modCharInverse = uniqueCharsInverse[index];
                         decryptedKMFERString += modCharInverse;
-                        i += 1;
+                        i += 1;  // Move past the base character
                     }
                 } else {
-                    let index = uniqueChars.indexOf(nextChar)-1;
+                    // cannot be a permutation not enough space only a 
+                    let index = uniqueChars.indexOf(nextChar) - 1;
                     let modCharInverse = uniqueCharsInverse[index];
                     decryptedKMFERString += modCharInverse;
+                    // do not incremenet i
                 }
-            }else if (isbaseDigit(nextChar) && !isInMainBase(nextChar)) {
-                let jpanIntegerString = uniqueChars3.indexOf(nextChar).toString();
+            } else if (isbaseDigit(nextChar) && !isInMainBase(nextChar)) {
+                let jpanIntegerString = uniqueChars3.indexOf(nextChar); // char value is the index the only reason this works
                 decryptedKMFERString += jpanIntegerString;
-            }else {
-                let parts = '';
-                for (let m = 1; m <= modulus; m++) {
-                    parts += encryptedString[i + m];
-                }
-                decryptedKMFERString += parts;
-                i += modulus;
+                
             }
+            
+            // Handle repeat count by appending the decrypted string multiple times
             for (let k = 0; k < repeatCountNumber; k++) {
                 newString += decryptedKMFERString;
             }
-            decryptedString += newString;
+            decryptedString += newString;  // Add the decrypted string to the final result
         }else if (!isbaseDigit(char) && isInMainBase(char)) { 
             //console.log('we found reducible alphabetical chunk', char);
             let decryptedKMFERString = '';
@@ -718,11 +719,11 @@ function BursonBase64Decrypt(encryptedString, modulus) {
 
             decryptedString += decryptedKMFERString;
         }else if (isbaseDigit(char) && !isInMainBase(char)) { 
-            console.log('we found reducible integer chunk', char);
+            //console.log('we found reducible integer chunk', char);
             let index = uniqueChars3.indexOf(char)-1;
             decryptedString += index;
         }else if (parseInt(char)) {
-            //console.log('we found an integer', char);
+            //console.log('we found a integer', char);
             let integerChunk = '';
             let streamLine = 0;
             let pattern = true;
@@ -746,6 +747,7 @@ function BursonBase64Decrypt(encryptedString, modulus) {
                 decryptedString+= integerChunk;
             }
         }else if(char === '~' || char === '^'){
+            //console.log('we found a squiggle', char);
         }else{
             //console.log('everything failed');
             decryptedString+= char;
