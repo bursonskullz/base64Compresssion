@@ -5,21 +5,9 @@
 /*
 Notes:
 
-    1) Make sure elements are being made uniquely the intersection must be empty see Eq.(12) in the paper and refer to checkIntersection() and hasDuplicates() functions.  
-       The code should not attempt to reduce a string Y if it detects that the symbols are not being created uniquely and have precisly the number of elements we need.
-       There seems to be an overrlapping between chineese and japanese symbols in unicode. Currently the code sets the integer reduction map using emojie symbols. 
-       Unicode symbols contains enough chars to accuratly test the code without the need to make our own set of trifold knots (which will be implemnted later).
-       Recall we need 26^m elements to recuce strings in A_m, 10^m symbols to reduce strings in I_m, and 2^m-2 elements to reduce an element in P_m (a perumation vector). 
-       The permuations should not contain (0,0,0,...,0) or (1,1,1,...,1).
-       
-    2) Ensure compressor is accuratly mapping to the correct functions alpha, beta, gamma, delta or identity in appropriate cases. One may need fix the notation to
-       maintain constistancy with the paper being produced. 
-
-    3) Ensure the decompressor is accuralty decompressing the original string (we should get back the exact string we initially tried to compress)
-       Make a loop to test an array full of random strings to esnure accurate results hold. 
-
-    4) After step (1)-(3) start to create our own unique sets of symbols using Trifold knots instead of using the available unicode
-       The symbols can also be stored on a solidity contract and pulled so that they never change over time for production purposes (this is being considered as an option).  
+    1) Decompressor needs fixed throws erorrs when using strings involoving permuations but seems to be fine for all caps and all integer strings
+    2) after fixing the decompressor work on making abtriary amount of symbols not in unicode. 
+    
 */
 
 const bursonCryptopgraphy = require('./base64Encryption.js'); // Import functions from file into object. 
@@ -66,7 +54,7 @@ const ifI_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars2); //  c
 const ifP_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars3); //  checks the array uniqueChars3 has no repeated elements
 
 let intersection = bursonCryptopgraphy.checkIntersection(); // has not been verified but purposes is to check if the intersecion of A_m, I_m, and P_m is empty.
-var base64TestString = `data:image/png;base64, ABC123124ABC123124ABC123124ABC123124`; // Edit string here to test and gather results. 
+var base64TestString = `data:image/png;base64, 2RgIRgIAbC-j+mfmfANAN`; // Edit string here to test and gather results. 
 
 if(uniqueChars.length >= mainBase**modulus && !ifA_mHasDuplicate && !ifI_mHasDuplicate && !ifP_mHasDuplicate && intersection){
     console.log('calling compressor using unique set of symbols generated with length:', uniqueChars.length);
