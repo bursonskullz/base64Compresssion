@@ -740,26 +740,23 @@ function BursonBase64Decrypt(encryptedString, modulus) {
         }else if (parseInt(char)) {
             let integerChunk = '';
             let streamLine = 0;
-            let pattern = false;
+            let pattern = true;
             for (var k = i; k < encryptedString.length; k++) {
                 if(parseInt(encryptedString[k])){ 
                     integerChunk += encryptedString[k];
                     streamLine+=1;
-                }else if(encryptedString[k] === "~"  ){
-                    pattern = false;
-                    streamLine+=1;
+                }else if(encryptedString[k] === "~" ){
+                    pattern = true;
+                    streamLine +=1;
                     break;
-                }else if(encryptedString[k]=== "|"){
+                }else if(encryptedString[k] === "|"){
                     streamLine+=1;
-                    pattern == true
-                    break
+                    pattern = false;
+                    break;
                 }else{
-                    pattern = false;
-                    break;
                 }
             }
-            if(pattern){
-                i+=streamLine;
+            if(!pattern){
             }else{
                 decryptedString+= integerChunk;
             }
@@ -770,7 +767,6 @@ function BursonBase64Decrypt(encryptedString, modulus) {
     }
     return decryptedString;
 }
-
 
 module.exports = {
     BursonBase64Decrypt,
