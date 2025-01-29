@@ -1,6 +1,6 @@
 // Author: Roy Burson 
 // purpose: Finish Base 64 Finite Compression Algorithm Taken from Website Design for Publication Consideration.
-// Date: Janurary 16, 2025 
+// Date: Janurary 29, 2025 
 
 /*
 Notes:
@@ -66,7 +66,7 @@ const ifI_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars2); //  c
 const ifP_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars3); //  checks the array uniqueChars3 has no repeated elements
 
 let intersection = bursonCryptopgraphy.checkIntersection(); // has not been verified but purposes is to check if the intersecion of A_m, I_m, and P_m is empty.
-var base64TestString = `data:image/png;base64, dehbddhbebhehdh737377jnDND82HHH3u3udgGGGGGHH2hh2h2bhbehbeb`; // Edit string here to test and gather results. 
+var base64TestString = `data:image/png;base64, ABC123124ABC123124ABC123124ABC123124`; // Edit string here to test and gather results. 
 
 if(uniqueChars.length >= mainBase**modulus && !ifA_mHasDuplicate && !ifI_mHasDuplicate && !ifP_mHasDuplicate && intersection){
     console.log('calling compressor using unique set of symbols generated with length:', uniqueChars.length);
