@@ -45,9 +45,8 @@ function isInMainBase(char){
     return uniqueCharsSet.has(char);
 }
 
-function isbaseDigit(char){
-    const uniqueCharsSet = new Set(uniqueChars3);
-    return uniqueCharsSet.has(char);
+function isbaseDigit(char) {
+    return uniqueChars3.includes(char);
 }
 
 function isAKMfer(char){
@@ -631,14 +630,23 @@ function BursonBase64Encrypted(base64String, modulus) {
 
 
 function BursonBase64Decrypt(encryptedString, modulus) {
-    console.log('Calling Burson decompression with string', encryptedString);
-    let decryptedString = ''; let alphabet = `ABCDEFGHIJKLMNOPQRSTUVWXYZ`;
-    encryptedString = reverseOwlphaLoop(encryptedString);
-    console.log('Image length after reversing owlphaLoop', encryptedString.length);
+    let decryptedString = ''; 
+    let alphabet = `ABCDEFGHIJKLMNOPQRSTUVWXYZ`;
+    let encryptedLength = Array.from(encryptedString).length;
     console.log('Image to decrypt:', encryptedString);
-    for (let i = 0; i < encryptedString.length; i++) {
+    console.log('Image length:', encryptedLength);
+    //console.log('Before reversal:', [...encryptedString].map(c => c.charCodeAt(0)));
+    encryptedString = reverseOwlphaLoop(encryptedString);
+    encryptedString = Array.from(encryptedString); // Properly splits emojis & symbols
+    let encryptedLengthOwl = Array.from(encryptedString).length;
+    console.log('Image length after reversing owlphaLoop', encryptedLengthOwl);
+    console.log('Image to decrypt after Owlphaloop:', encryptedString);
+    //console.log('After reversal:', [...reverseOwlphaLoop(encryptedString)].map(c => c.charCodeAt(0)));
+    for (let i = 0; i < encryptedLengthOwl; i++) {
         const char = encryptedString[i];
-        console.log('we are examining the symbol', char);
+        //console.log('we are examining the symbol', char);
+        //console.log(`Checking isbaseDigit(${char}):`, isbaseDigit(char));
+        //console.log(`Checking isInMainBase(${char}):`, isInMainBase(char));
         if (char === '|') {
             let repeatCount = getBarNumberAttachment(i, encryptedString); 
             const repeatCountNumber = parseInt(repeatCount) || 1;
@@ -678,7 +686,7 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             }
             decryptedString += newString;
         }else if (!isbaseDigit(char) && isInMainBase(char)) { 
-            console.log('we found reducible alphabetical chunk', char);
+            //console.log('we found reducible alphabetical chunk', char);
             let decryptedKMFERString = '';
             let index = uniqueChars.indexOf(char) -1;
             let modCharInverse = uniqueCharsInverse[index];
@@ -699,11 +707,11 @@ function BursonBase64Decrypt(encryptedString, modulus) {
 
             decryptedString += decryptedKMFERString;
         }else if (isbaseDigit(char) && !isInMainBase(char)) { 
-            console.log('we found reducible integer chunk', char);
+            //console.log('we found reducible integer chunk', char);
             let index = uniqueChars3.indexOf(char)-1;
             decryptedString += index;
         }else if (parseInt(char)) {
-            console.log('we integer', char);
+            //console.log('we found a integer', char);
             let integerChunk = '';
             let streamLine = 0;
             let pattern = true;
@@ -728,12 +736,12 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             }
         }else if(char === '~' || char === '^'){
         }else{
+            console.log('everything failed');
             decryptedString+= char;
         }
     }
     return decryptedString;
 }
-
 
 module.exports = {
     BursonBase64Decrypt,
