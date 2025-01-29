@@ -552,130 +552,93 @@ function mapCharsToTransformedWord(chineseChar, khmerChar) {
 
 
 function BursonBase64Encrypted(base64String, modulus) {
-    base64String = base64String.replace(/^data:image\/[a-z]+;base64,/, '');
-    base64String = base64String.replace(/ /g, "");
+    base64String = base64String.replace(/^data:image\/[a-z]+;base64,/, '').replace(/ /g, "");
     let bestChunks = separateIntoBestChunk(base64String, modulus);
+    console.log('Calling burson compressor with the string', base64String);
     console.log('Image length before compression applied', base64String.length);
     console.log('encryption using chunks', bestChunks);
     console.log('best chunks length (how many loops inside compressor):', bestChunks.length);
     console.log('Image in base 64):', base64String);
+    
     let encryptedString = '';
     let alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let processedIndices = new Set(); 
-    for(var i = 0; i< bestChunks.length; i++){
+    
+    for (let i = 0; i < bestChunks.length; i++) {
+        if (processedIndices.has(i)) continue;
+        
         const chunk = bestChunks[i];
-        let currentIndex = i;
-        if (processedIndices.has(currentIndex)) return;
-        let maxCount = getMaxChunkCount(chunk, bestChunks); 
-        let frontEncryption;
+        let maxCount = getMaxChunkCount(chunk, bestChunks);
+        let frontEncryption = chunk; 
+        
+        let isUpperCase = chunk === chunk.toUpperCase();
+        let isLowerCase = chunk === chunk.toLowerCase();
+        let isEnglishChunk = [...chunk].every(char => alphabet.includes(char));
+        let isStringDigits = isDigitChunk(chunk);
+        
         if (maxCount > 1 && chunk.length === modulus) {
-            let isUpperCase = chunk === chunk.toUpperCase();
-            let isLowerCase = chunk === chunk.toLowerCase();
-            let isEnglishChunk = [...chunk].every(char => alphabet.includes(char));
-            let isStringDigits = isDigitChunk(chunk);
-            let encryptedChunk;
-            if (maxCount === 1) {
-                if ((isUpperCase || isLowerCase) && isEnglishChunk && chunk.length === modulus) {
-                    uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
-                    frontEncryption = `${uniqueSymbol}`;
-                } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
-                    uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
-                    frontEncryption = `${uniqueSymbol}`;
-                } else if (!isUpperCase && !isLowerCase && !isEnglishChunk && !isStringDigits) {
-                    frontEncryption = `${chunk}`;
-                }else if(isStringDigits){
-                    //console.log('assigning digit');
-                    uniqueSymbol = getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
-                    frontEncryption = `${uniqueJapanChar}`;
-                }else{
-                    frontEncryption = `${chunk}`;
-                }
-                frontEncryption = chunk; 
-            } else if(maxCount!=0) {
-                let uniqueSymbol;
-                if (isUpperCase && isEnglishChunk && chunk.length === modulus) {
-                    uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
-                    frontEncryption = `~${maxCount}|${uniqueSymbol}`; 
-                } else if(isLowerCase && isEnglishChunk && chunk.length === modulus) {
-                    uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
-                    frontEncryption = `~${maxCount}|${uniqueSymbol}^`;
-                } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
-                    uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
-                    frontEncryption = `${maxCount}|${uniqueSymbol}`;
-                }else if(isStringDigits){
-                    uniqueSymbol = getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
-                    frontEncryption = `~${maxCount}|${uniqueSymbol}`;
-                } else if (!isUpperCase && !isLowerCase && !isEnglishChunk) {
-                    frontEncryption = `~${maxCount}|${chunk}`;
-                }else{
-                    frontEncryption = `~${maxCount}|${chunk}`;
-                }
-            }else{ 
-                frontEncryption+= chunk;
-            }
-            encryptedString += frontEncryption; 
-            for (let i = 1; i < maxCount; i++) {
-                if (currentIndex + i < bestChunks.length) {
-                    processedIndices.add(currentIndex + i);
-                }
-            }
-        }else if(chunk.includes('+') || chunk.includes('-')) {
-            if(maxCount > 1){
-                for(var i=0; i< maxCount; i++){
-                    encryptedString+= chunk;
-                }
-            }else{
-                encryptedString += chunk;
-            }
-        }else if(maxCount == 1 && chunk.length === modulus){
-            let isUpperCase = chunk === chunk.toUpperCase();
-            let isLowerCase = chunk === chunk.toLowerCase();
-            let isEnglishChunk = [...chunk].every(char => alphabet.includes(char));
-            let isStringDigits = isDigitChunk(chunk); 
-            let encryptedChunk;
-            if (isUpperCase && isEnglishChunk && chunk.length === modulus) {
-                //console.log('setting upper case chunk to china symbol', chunk);
+            let uniqueSymbol;
+            if (isUpperCase && isEnglishChunk) {
                 uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
-                frontEncryption = `${uniqueSymbol}`;
-            }else if (isLowerCase && isEnglishChunk && chunk.length === modulus) {
+                frontEncryption = `~${maxCount}|${uniqueSymbol}`;
+            } else if (isLowerCase && isEnglishChunk) {
+                uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
+                frontEncryption = `~${maxCount}|${uniqueSymbol}^`;
+            } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
+                uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
+                frontEncryption = `~${maxCount}|${uniqueSymbol}`;
+            } else if (isStringDigits) {
+                uniqueSymbol = getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
+                frontEncryption = `~${maxCount}|${uniqueSymbol}`;
+            } else {
+                frontEncryption = `~${maxCount}|${chunk}`;
+            }
+        } else if (chunk.includes('+') || chunk.includes('-')) {
+            frontEncryption = chunk.repeat(maxCount);
+        } else if (maxCount === 1 && chunk.length === modulus) {
+            let uniqueSymbol;
+            if (isUpperCase && isEnglishChunk) {
+                uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
+                frontEncryption = uniqueSymbol;
+            } else if (isLowerCase && isEnglishChunk) {
                 uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 frontEncryption = `${uniqueSymbol}^`;
             } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
-                let permutationFrontEncryption =  getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
+                let permutationFrontEncryption = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
                 frontEncryption = `${uniqueSymbol}${permutationFrontEncryption}`;
-            } else if (!isUpperCase && !isLowerCase && !isEnglishChunk) {
-                frontEncryption = `${chunk}`;
-            }else if(isStringDigits){
-                //console.log('setting digit string', chunk);
-                uniqueSymbol =  getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
-                frontEncryption = `${uniqueSymbol}`;
-            }else{
-                frontEncryption = `${chunk}`;
+            } else if (isStringDigits) {
+                uniqueSymbol = getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
+                frontEncryption = uniqueSymbol;
             }
-            encryptedString += frontEncryption;
-        }else{
-            encryptedString += chunk;
         }
-        if(maxCount >1){
-            i += maxCount - 1;
+        
+        encryptedString += frontEncryption;
+        
+        for (let j = 1; j < maxCount; j++) {
+            if (i + j < bestChunks.length) {
+                processedIndices.add(i + j);
+            }
         }
     }
+    
     console.log('Image length before Owlphaloop', encryptedString.length);
     let owlphaString = performOwlphaLoop(encryptedString);
     console.log('Image length after owl compression', owlphaString.length);
-    console.log('Image representation after after Owlphaloop', owlphaString);
+    console.log('Image representation after Owlphaloop', owlphaString);
     return owlphaString;
 }
 
+
 function BursonBase64Decrypt(encryptedString, modulus) {
-    console.log('Calling Burson decompression with length', encryptedString.length);
+    console.log('Calling Burson decompression with string', encryptedString);
     let decryptedString = ''; let alphabet = `ABCDEFGHIJKLMNOPQRSTUVWXYZ`;
     encryptedString = reverseOwlphaLoop(encryptedString);
     console.log('Image length after reversing owlphaLoop', encryptedString.length);
     console.log('Image to decrypt:', encryptedString);
     for (let i = 0; i < encryptedString.length; i++) {
         const char = encryptedString[i];
+        console.log('we are examining the symbol', char);
         if (char === '|') {
             let repeatCount = getBarNumberAttachment(i, encryptedString); 
             const repeatCountNumber = parseInt(repeatCount) || 1;
@@ -715,6 +678,7 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             }
             decryptedString += newString;
         }else if (!isbaseDigit(char) && isInMainBase(char)) { 
+            console.log('we found reducible alphabetical chunk', char);
             let decryptedKMFERString = '';
             let index = uniqueChars.indexOf(char) -1;
             let modCharInverse = uniqueCharsInverse[index];
@@ -735,9 +699,11 @@ function BursonBase64Decrypt(encryptedString, modulus) {
 
             decryptedString += decryptedKMFERString;
         }else if (isbaseDigit(char) && !isInMainBase(char)) { 
+            console.log('we found reducible integer chunk', char);
             let index = uniqueChars3.indexOf(char)-1;
             decryptedString += index;
         }else if (parseInt(char)) {
+            console.log('we integer', char);
             let integerChunk = '';
             let streamLine = 0;
             let pattern = true;
@@ -767,6 +733,7 @@ function BursonBase64Decrypt(encryptedString, modulus) {
     }
     return decryptedString;
 }
+
 
 module.exports = {
     BursonBase64Decrypt,
