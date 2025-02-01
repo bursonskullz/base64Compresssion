@@ -35,10 +35,8 @@ function getModCharInverse(x, modulus, mainBase) {
             console.log('char index out of range, cannot set data');
         }
     }
-
-    return modChar; // Return the final character string
+    return modChar; 
 }
-
 
 function isInMainBase(char){
     const uniqueCharsSet = new Set(uniqueChars);
@@ -100,8 +98,6 @@ function getUniqueModulusChar(word, charArray, modLength) {
         }
 
     }
-    //console.log(`we assigned the chunk ${word} the current index`, calculatedIndex);
-
     let uniqueIndex = calculatedIndex;
     if (uniqueIndex >= 0 && uniqueIndex <= charArray.length) {
         return charArray[uniqueIndex]; 
@@ -119,38 +115,34 @@ function hasDuplicates(uniqueChars) {
             }
         }
     }
-    return false; // No duplicates found
+    return false;
 }
 
 
 function checkIntersection() {
-    let set1 = new Set(uniqueChars);  // Convert array to a set for faster lookup
+    let set1 = new Set(uniqueChars); 
     let set2 = new Set(uniqueChars2);
     let set3 = new Set(uniqueChars3);
-
-    // Iterate through the smallest set and check for any common elements in the other two sets
     let smallestSet = set1.size <= set2.size && set1.size <= set3.size ? set1 :
                       set2.size <= set1.size && set2.size <= set3.size ? set2 : set3;
 
     for (let char of smallestSet) {
         if (set1.has(char) && set2.has(char) && set3.has(char)) {
-            return false;  // Intersection found, arrays share at least one element
+            return false; 
         }
     }
 
-    return true;  // No intersection found, arrays do not share any elements
+    return true;  
 }
 
 
 function setMainUniquebaseCharMapping(modulus, alphabetBase)  {
-
     let chineseChars = [];
-    let base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // 26 characters
-    const start = 0x4E00; // Start of Chinese character range (CJK Unified Ideographs)
-    const end = 0x9FFF;   // End of Chinese character range
-    let permutationLimit = base.length ** modulus; // 26^3 = 17,576 permutations
-    let chineseLimit = Math.min(permutationLimit, end - start + 1); // Make sure we don't exceed available Chinese chars
-
+    let base = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
+    const start = 0x4E00; 
+    const end = 0x9FFF;   
+    let permutationLimit = base.length ** modulus;
+    let chineseLimit = Math.min(permutationLimit, end - start + 1); 
     let counter = 0;
     for (let i = start; i <= end; i++) {
         if (counter >= chineseLimit) {
@@ -162,85 +154,12 @@ function setMainUniquebaseCharMapping(modulus, alphabetBase)  {
             counter += 1;
         }
     }
-
     return chineseChars;
 }
 
 function setUniqueDigitCharsMapping(modulus,baseLength) {
-    // use japanese symbols
-    /*
-    const totalCount = baseLength**modulus;
-    console.log(`setting ${totalCount} elements to map the digit chunks to`);
-    const chunkSize = 5000; 
-    let customs = [];
-    for (let i = 0; i < totalCount; i += chunkSize) {
-        const currentChunkSize = Math.min(chunkSize, totalCount - i);
-        let customSpiralSymbols = [];
-        for (let j = 0; j < currentChunkSize; j++) {
-            const normalizedIndex = (i + j) / totalCount; 
-            const index = normalizedIndex + Math.sin(normalizedIndex * 2 * Math.PI) * 0.1; 
-            const customSymbol = createCustomSymbol(index, baseLength, modulus);
-            customSpiralSymbols.push(customSymbol); 
-        }
-        const newSymbols = drawStringFromSymbols(customSpiralSymbols);
-        customs.push(...newSymbols);
-    }
-    console.log(`Total custom symbols to map digit chunks: ${customs.length}`);
-    return customs;
-    */
-    
-
-    /*
-    let jpanChars = [];  
-    let limit = baseLength ** modulus;
-
-    // Define the ranges for Hiragana, Katakana, and a limited set of Kanji (for example)
-    const hiraganaStart = 0x3040; // Hiragana range starts at 0x3040
-    const hiraganaEnd = 0x309F;   // Hiragana range ends at 0x309F
-
-    const katakanaStart = 0x30A0; // Katakana range starts at 0x30A0
-    const katakanaEnd = 0x30FF;   // Katakana range ends at 0x30FF
-
-    const kanjiStart = 0x4E00;    // Kanji range starts at 0x4E00
-    const kanjiEnd = 0x9FAF;      // Kanji range ends at 0x9FAF
-
-    // Calculate the total number of characters in all three ranges
-    const totalHiragana = hiraganaEnd - hiraganaStart + 1;
-    const totalKatakana = katakanaEnd - katakanaStart + 1;
-    const totalKanji = kanjiEnd - kanjiStart + 1;
-    const totalCharsInRange = totalHiragana + totalKatakana + totalKanji;
-
-    // Throw an error if the limit exceeds the available characters in the combined ranges
-    if (limit > totalCharsInRange) {
-        throw new Error(`Symbol limit of ${limit} exceeds the available range of ${totalCharsInRange} characters.`);
-    }
-
-    var counter = 0;     
-    // Add Hiragana characters
-    for (let i = hiraganaStart; i <= hiraganaEnd && counter < limit; i++) {
-        jpanChars.push(String.fromCharCode(i));
-        counter++;
-    }
-
-    // Add Katakana characters
-    for (let i = katakanaStart; i <= katakanaEnd && counter < limit; i++) {
-        jpanChars.push(String.fromCharCode(i));
-        counter++;
-    }
-
-    // Add Kanji characters
-    for (let i = kanjiStart; i <= kanjiEnd && counter < limit; i++) {
-        jpanChars.push(String.fromCharCode(i));
-        counter++;
-    }
-    
-    return jpanChars;
-    */
-
-// Using emojis for the unique character mapping instead of Japanese characters
     let emojiChars = [];
     let limit = baseLength ** modulus;
-
     // Unicode ranges for emojis (expanding to include more)
     const emojiRanges = [
         [0x1F600, 0x1F64F],  // Emoticons (e.g., 😀 to 🙏)
@@ -252,21 +171,15 @@ function setUniqueDigitCharsMapping(modulus,baseLength) {
         [0x2700, 0x27BF],    // Dingbats (e.g., ✂️ to ➿)
         [0x1FA70, 0x1FAFF],  // Symbols and pictographs extended-A (e.g., 🪀 to 🪶)
     ];
-
-    // Calculate the total number of emojis across all ranges
     let totalAvailableEmojis = 0;
     for (let [start, end] of emojiRanges) {
         totalAvailableEmojis += (end - start + 1);
     }
-
-    // Throw an error if the limit exceeds the available emojis
     if (limit > totalAvailableEmojis) {
         throw new Error(`Symbol limit of ${limit} exceeds the available range of ${totalAvailableEmojis} emojis.`);
     }
-
     var counter = 0;
 
-    // Loop through all ranges and add emojis until the limit is reached
     for (let [start, end] of emojiRanges) {
         for (let i = start; i <= end && counter < limit; i++) {
             emojiChars.push(String.fromCodePoint(i));
@@ -274,19 +187,17 @@ function setUniqueDigitCharsMapping(modulus,baseLength) {
         }
         if (counter >= limit) break;
     }
-
     return emojiChars;
 }
 
 function getUniquePermutationSymbol(word, khmerChars, modulus) {
     let calculatedIndex = 0;
     let base = '01';
-
     if (word.length !== modulus) {
         throw new Error(`Word must be exactly ${modulus} characters long.`);
     }
-    let permutation = []; const baseLength = 2;
-    //console.log('getting permutation for word', word);
+    let permutation = []; 
+    const baseLength = 2;
     for(const char of word){
         if(char === char.toUpperCase()){
             permutation.push(1);
@@ -294,18 +205,21 @@ function getUniquePermutationSymbol(word, khmerChars, modulus) {
             permutation.push(0);
         }
     }
-    //console.log('permutation used for encryption', permutation);
+
 
     for (let k = 0; k < permutation.length; k++) {
         let digit = permutation[k];
         let indexOfDigitInBase = base.indexOf(digit) + 1;
-        //console.log('digit of char in permutation and index in base', digit, indexOfDigitInBase);
-
-        calculatedIndex += (baseLength ** (modulus - k - 1)) * (digit); // Fix exponent shift
+        //console.log('index in  base', indexOfDigitInBase);
+        calculatedIndex += (baseLength ** (modulus - k - 1)) * (digit); 
     }
-    //console.log('permutation index', calculatedIndex);
 
-    return khmerChars[calculatedIndex]; 
+    //console.log('permutation', permutation);
+    //console.log('index of permutation symbol using formula', calculatedIndex); // here we can also 
+
+    return khmerChars[calculatedIndex];  
+
+    
 }
 
 function getUniqueDigitModulusCharSymbol(digitChunk, charArray, modLength) {
@@ -315,7 +229,6 @@ function getUniqueDigitModulusCharSymbol(digitChunk, charArray, modLength) {
     const alphabet = "0123456789";
     let base = alphabet.length;    
     let calculatedIndex = 0;
-
     for (var i = 1; i<= modLength; i++) {
         if(i != modLength){
             calculatedIndex += (alphabet.length ** (modLength-i)) * (alphabet.indexOf(digitChunk[i-1]))
@@ -324,7 +237,6 @@ function getUniqueDigitModulusCharSymbol(digitChunk, charArray, modLength) {
         }
 
     }
-
     let uniqueIndex = calculatedIndex;
     if (uniqueIndex >= 0 && uniqueIndex <= charArray.length) {
         return charArray[uniqueIndex]; 
@@ -492,14 +404,12 @@ function separateIntoBestChunk(base64String, chunkLength) {
 }
 
 function setUniquePermutationMapping(modulus) {
-    // Use index formula to set permutation depending on index 
-    // The permuations should not contain (0,0,0,...,0) or (1,1,1,...,1) double check. Currently its printing one of them so there must be mistake. 
     let khmerChars = [];  
     let base = "01";
     const start = 0x1780; 
     const end = 0x17FF;   
-    let permutationLimit = base.length ** modulus - 2; // minus 2 because we do not need the 
-    let khmfersLimit = 48; // max rank 6 vector is using Cambodian symbols (Khmer chars)
+    let permutationLimit = base.length ** modulus - 2; 
+    let khmfersLimit = 48; 
     if (permutationLimit > khmfersLimit) {
         console.warn(`Capping permutation limit to khmfersLimit (${khmfersLimit})`);
         permutationLimit = khmfersLimit; 
@@ -534,14 +444,10 @@ function mapCharsToTransformedWord(chineseChar, khmerChar) {
     const khmerIndex = uniqueChars2.indexOf(khmerChar)-1;
 
     if (khmerIndex === -1) {
-        throw new Error("Khmer character not found in uniqueKhmerChars array.");
+        throw new Error("permutation character not found in array.");
     }
 
-
     let stringPerm = uniqueChars2Inverse[khmerIndex];
-    //console.log('permutation index', khmerIndex);
-    //console.log('permutation inverse', stringPerm);
-
     for(var i = 0; i< stringPerm.length; i++ ){
         caseValues.push(parseInt(stringPerm[i]));
     }
@@ -591,7 +497,6 @@ function BursonBase64Encrypted(base64String, modulus) {
                 uniqueSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 frontEncryption = `~${maxCount}|${uniqueSymbol}^`;
             } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
-                //console.log('Processing chunk:', chunk);
                 let mainBaseSymbol = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
                 frontEncryption = `~${maxCount}|${mainBaseSymbol}${uniqueSymbol}`;
@@ -601,7 +506,7 @@ function BursonBase64Encrypted(base64String, modulus) {
             } else {
                 frontEncryption = `~${maxCount}|${chunk}`;
             }
-        } else if (chunk.includes('+') || chunk.includes('/')) {
+        } else if (chunk.includes('+') || chunk.includes('/') || chunk.includes('=')) {
             frontEncryption = chunk.repeat(maxCount);
         } else if (maxCount === 1 && chunk.length === modulus) {
             let uniqueSymbol;
@@ -614,14 +519,12 @@ function BursonBase64Encrypted(base64String, modulus) {
             } else if (!isUpperCase && !isLowerCase && isEnglishChunk) {
                 let permutationFrontEncryption = getUniqueModulusChar(chunk.toUpperCase(), uniqueChars, modulus);
                 uniqueSymbol = getUniquePermutationSymbol(chunk, uniqueChars2, modulus);
-                //console.log('Processing chunk for not all capital:', chunk);
                 frontEncryption = `${permutationFrontEncryption}${uniqueSymbol}`;
             } else if (isStringDigits) {
                 uniqueSymbol = getUniqueDigitModulusCharSymbol(chunk, uniqueChars3, modulus);
                 frontEncryption = uniqueSymbol;
             }
         }
-        
         encryptedString += frontEncryption;
         
         for (let j = 1; j < maxCount; j++) {
@@ -638,73 +541,63 @@ function BursonBase64Encrypted(base64String, modulus) {
     return owlphaString;
 }
 
-
 function BursonBase64Decrypt(encryptedString, modulus) {
     let decryptedString = ''; 
     let alphabet = `ABCDEFGHIJKLMNOPQRSTUVWXYZ`;
     let encryptedLength = Array.from(encryptedString).length;
     console.log('Image to decrypt:', encryptedString);
     encryptedString = reverseOwlphaLoop(encryptedString);
+    console.log('image after reversing Owlphaloop', encryptedString);
     encryptedString = Array.from(encryptedString); 
     let encryptedLengthOwl = Array.from(encryptedString).length;
     for (let i = 0; i < encryptedLengthOwl; i++) {
         const char = encryptedString[i];
         if (char === '|') {
-            // Extract repeat count attached to the bar symbol
             let repeatCount = getBarNumberAttachment(i, encryptedString);
             if (repeatCount === undefined || isNaN(parseInt(repeatCount))) {
                 console.log(`Invalid repeatCount extracted: ${repeatCount}, defaulting to 1`);
                 repeatCount = 1;
             }
             const repeatCountNumber = parseInt(repeatCount);
-            let nextChar = encryptedString[i + 1]; // The character after the bar
+            let nextChar = encryptedString[i + 1]; 
             let decryptedKMFERString = '';
             let newString = '';
             
-            // Handle if the next character is a valid base character and not a digit
             if (isInMainBase(nextChar) && !isbaseDigit(nextChar)) {
                 if (i + 2 < encryptedString.length) {
-                    const getKmferChar = encryptedString[i + 2]; // Check the third character if it
+                    const getKmferChar = encryptedString[i + 2]; 
                     if (isAKMfer(getKmferChar)) {
-                        // If there's a permutation, map the characters and skip the next two characters
                         decryptedKMFERString = mapCharsToTransformedWord(nextChar, getKmferChar);
-                        i += 2;  // Skip both the permutation symbol and the character after it
+                        i += 2;  
                     } else {
-                        // If no permutation, just inverse the character
                         let index = uniqueChars.indexOf(nextChar) - 1;
                         let modCharInverse = uniqueCharsInverse[index];
                         decryptedKMFERString += modCharInverse;
-                        i += 1;  // Move past the base character
+                        i += 1;  
                     }
                 } else {
-                    // cannot be a permutation not enough space only a 
                     let index = uniqueChars.indexOf(nextChar) - 1;
                     let modCharInverse = uniqueCharsInverse[index];
                     decryptedKMFERString += modCharInverse;
-                    // do not incremenet i
                 }
             } else if (isbaseDigit(nextChar) && !isInMainBase(nextChar)) {
-                let jpanIntegerString = uniqueChars3.indexOf(nextChar); // char value is the index the only reason this works
+                let jpanIntegerString = uniqueChars3.indexOf(nextChar); 
                 decryptedKMFERString += jpanIntegerString;
                 
             }
             
-            // Handle repeat count by appending the decrypted string multiple times
             for (let k = 0; k < repeatCountNumber; k++) {
                 newString += decryptedKMFERString;
             }
-            decryptedString += newString;  // Add the decrypted string to the final result
+            decryptedString += newString; 
         }else if (!isbaseDigit(char) && isInMainBase(char)) { 
-            //console.log('we found reducible alphabetical chunk', char);
             let decryptedKMFERString = '';
             let index = uniqueChars.indexOf(char) -1;
             let modCharInverse = uniqueCharsInverse[index];
 
             if (i+1 < encryptedString.length) {
                 const nextChar = encryptedString[i+1];
-                //console.log('checking char to see if it is a permutation', nextChar);
                 if (isAKMfer(nextChar)) {
-                    //console.log('we found a permutation', nextChar);
                     decryptedKMFERString += mapCharsToTransformedWord(char, nextChar);
                     i += 1;
                 }else if (nextChar === '^') {
@@ -719,27 +612,24 @@ function BursonBase64Decrypt(encryptedString, modulus) {
 
             decryptedString += decryptedKMFERString;
         }else if (isbaseDigit(char) && !isInMainBase(char)) { 
-            //console.log('we found reducible integer chunk', char);
             let index = uniqueChars3.indexOf(char)-1;
             decryptedString += index;
         }else if (parseInt(char)) {
-            //console.log('we found a integer', char);
             let integerChunk = '';
             let streamLine = 0;
-            let pattern = true;
-            for (var k = i; k < encryptedString.length; k++) {
+            let pattern = false;
+
+            for (var k = i; k < encryptedLengthOwl; k++) {
                 if(parseInt(encryptedString[k])){ 
                     integerChunk += encryptedString[k];
-                    streamLine+=1;
-                }else if(encryptedString[k] === "~" ){
+                    streamLine += 1;
                     pattern = true;
-                    streamLine +=1;
-                    break;
                 }else if(encryptedString[k] === "|"){
                     streamLine+=1;
-                    pattern = false;
+                    pattern = true;
                     break;
                 }else{
+                    break;
                 }
             }
             if(!pattern){
@@ -747,9 +637,7 @@ function BursonBase64Decrypt(encryptedString, modulus) {
                 decryptedString+= integerChunk;
             }
         }else if(char === '~' || char === '^'){
-            //console.log('we found a squiggle', char);
         }else{
-            //console.log('everything failed');
             decryptedString+= char;
         }
     }
