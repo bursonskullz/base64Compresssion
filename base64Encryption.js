@@ -569,6 +569,11 @@ function BursonBase64Decrypt(encryptedString, modulus) {
                     if (isAKMfer(getKmferChar)) {
                         decryptedKMFERString = mapCharsToTransformedWord(nextChar, getKmferChar);
                         i += 2;  
+                    }else if(getKmferChar === '^'){
+                        let index = uniqueChars.indexOf(nextChar) - 1;
+                        let modCharInverse = uniqueCharsInverse[index];
+                        decryptedKMFERString += modCharInverse.toLowerCase();
+                        i+=1;
                     } else {
                         let index = uniqueChars.indexOf(nextChar) - 1;
                         let modCharInverse = uniqueCharsInverse[index];
@@ -595,8 +600,8 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             let index = uniqueChars.indexOf(char) -1;
             let modCharInverse = uniqueCharsInverse[index];
 
-            if (i+1 < encryptedString.length) {
-                const nextChar = encryptedString[i+1];
+            if (i < encryptedString.length) {
+                let nextChar = encryptedString[i+1];
                 if (isAKMfer(nextChar)) {
                     decryptedKMFERString += mapCharsToTransformedWord(char, nextChar);
                     i += 1;
@@ -619,7 +624,7 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             let streamLine = 0;
             let pattern = false;
 
-            for (var k = i; k < encryptedLengthOwl; k++) {
+            for (var k = i+1; k < encryptedLengthOwl; k++) {
                 if(parseInt(encryptedString[k])){ 
                     integerChunk += encryptedString[k];
                     streamLine += 1;
