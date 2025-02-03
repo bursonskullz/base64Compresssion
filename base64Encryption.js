@@ -481,7 +481,7 @@ function mapCharsToTransformedWord(chineseChar, khmerChar) {
 function BursonBase64Encrypted(base64String, modulus) {
     base64String = base64String.replace(/^data:image\/[a-z]+;base64,/, '').replace(/ /g, "");
     let bestChunks = separateIntoBestChunk(base64String, modulus);
-    console.log('Calling burson compressor with the string', base64String);
+    //console.log('Calling burson compressor with the string', base64String);
     console.log('Image length before compression applied', base64String.length);
     console.log('encryption using chunks', bestChunks);
     console.log('best chunks length (how many loops inside compressor):', bestChunks.length);
@@ -551,7 +551,7 @@ function BursonBase64Encrypted(base64String, modulus) {
     console.log('Image length before Owlphaloop', encryptedString.length);
     let owlphaString = performOwlphaLoop(encryptedString);
     console.log('Image length after owl compression', owlphaString.length);
-    console.log('Image representation after Owlphaloop', owlphaString);
+    //console.log('Image representation after Owlphaloop', owlphaString);
     return owlphaString;
 }
 
@@ -559,9 +559,9 @@ function BursonBase64Decrypt(encryptedString, modulus) {
     let decryptedString = ''; 
     let alphabet = `ABCDEFGHIJKLMNOPQRSTUVWXYZ`;
     let encryptedLength = Array.from(encryptedString).length;
-    console.log('Image to decrypt:', encryptedString);
+    //console.log('Image to decrypt:', encryptedString);
     encryptedString = reverseOwlphaLoop(encryptedString);
-    console.log('image after reversing Owlphaloop', encryptedString);
+    //console.log('image after reversing Owlphaloop', encryptedString);
     encryptedString = Array.from(encryptedString); 
     let encryptedLengthOwl = Array.from(encryptedString).length;
     for (let i = 0; i < encryptedLengthOwl; i++) {
@@ -636,15 +636,14 @@ function BursonBase64Decrypt(encryptedString, modulus) {
             let integerChunk = '';
             let streamLine = 0;
             let pattern = false;
-
-            for (var k = i+1; k < encryptedLengthOwl; k++) {
+            for (var k = i; k < encryptedLengthOwl; k++) {
                 if(parseInt(encryptedString[k])){ 
                     integerChunk += encryptedString[k];
                     streamLine += 1;
                     pattern = true;
                 }else if(encryptedString[k] === "|"){
                     streamLine+=1;
-                    pattern = true;
+                    pattern = false;
                     break;
                 }else{
                     break;
