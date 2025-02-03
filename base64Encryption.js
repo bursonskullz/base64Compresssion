@@ -100,7 +100,7 @@ function getUniqueModulusChar(word, charArray, modLength) {
     }
     let uniqueIndex = calculatedIndex;
     if (uniqueIndex >= 0 && uniqueIndex <= charArray.length) {
-        return charArray[uniqueIndex]; 
+        return charArray[uniqueIndex-1];
     } else {
         console.log('Error index out of boundary', calculatedIndex);
         throw new Error("Unique index is out of bounds of the character array");
@@ -206,20 +206,34 @@ function getUniquePermutationSymbol(word, khmerChars, modulus) {
         }
     }
 
-
+    /*
     for (let k = 0; k < permutation.length; k++) {
         let digit = permutation[k];
         let indexOfDigitInBase = base.indexOf(digit) + 1;
-        //console.log('index in  base', indexOfDigitInBase);
-        calculatedIndex += (baseLength ** (modulus - k - 1)) * (digit); 
+        calculatedIndex += (baseLength ** (modulus - k-1)) * (digit); 
+    }
+    */
+
+    ///console.log('permutation', permutation);
+    // use case statement and commment out when formula works 
+    //console.log('index of permutation symbol using formula', calculatedIndex); 
+
+    if(permutation[0] === 0 && permutation[1] === 0 && permutation[2] === 1){
+        return khmerChars[0];  
+    }else if(permutation[0] === 0 && permutation[1] === 1 && permutation[2] === 1){
+        return khmerChars[2]; 
+    }else if(permutation[0] === 1 && permutation[1] === 0 && permutation[2] === 1){
+        return khmerChars[4]; 
+    }else if(permutation[0] === 1 && permutation[1] === 1 && permutation[2] === 0){
+        return khmerChars[5]; 
+    }else if(permutation[0] === 1 && permutation[1] === 0 && permutation[2] === 0){
+        return khmerChars[3]; 
+    }else if(permutation[0] === 0 && permutation[1] === 1 && permutation[2] === 0){
+        return khmerChars[1]; 
     }
 
-    //console.log('permutation', permutation);
-    //console.log('index of permutation symbol using formula', calculatedIndex); // here we can also 
+    //return khmerChars[calculatedIndex-1];  
 
-    return khmerChars[calculatedIndex];  
-
-    
 }
 
 function getUniqueDigitModulusCharSymbol(digitChunk, charArray, modLength) {
@@ -431,7 +445,7 @@ function setUniquePermutationMapping(modulus) {
 }
 
 function mapCharsToTransformedWord(chineseChar, khmerChar) {
-    let indexOfChineseChar = uniqueChars.indexOf(chineseChar)-1;
+    let indexOfChineseChar = uniqueChars.indexOf(chineseChar);
     const reverseChinaChunk = uniqueCharsInverse[indexOfChineseChar];
     let caseValues = []; 
     let transformedWord = '';
@@ -441,7 +455,7 @@ function mapCharsToTransformedWord(chineseChar, khmerChar) {
     if (typeof reverseChinaChunk !== 'string') {
         throw new Error("Retrieved value is not a string.");
     }
-    const khmerIndex = uniqueChars2.indexOf(khmerChar)-1;
+    const khmerIndex = uniqueChars2.indexOf(khmerChar);
 
     if (khmerIndex === -1) {
         throw new Error("permutation character not found in array.");
@@ -595,11 +609,10 @@ function BursonBase64Decrypt(encryptedString, modulus) {
                 newString += decryptedKMFERString;
             }
             decryptedString += newString; 
-        }else if (!isbaseDigit(char) && isInMainBase(char)) { 
+        }else if (!isbaseDigit(char) && isInMainBase(char)) {
             let decryptedKMFERString = '';
-            let index = uniqueChars.indexOf(char) -1;
+            let index = uniqueChars.indexOf(char);
             let modCharInverse = uniqueCharsInverse[index];
-
             if (i < encryptedString.length) {
                 let nextChar = encryptedString[i+1];
                 if (isAKMfer(nextChar)) {
