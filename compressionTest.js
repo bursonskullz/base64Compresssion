@@ -1,12 +1,10 @@
 // Author: Roy Burson 
 // purpose: Finish Base 64 Finite Compression Algorithm Taken from Website Design for Publication Consideration.
-// Date: Janurary 29, 2025 
+// Date: Feburary 2, 2025 
 
 /* notes: 
-    
-    1) Not all permutations work correctly may have index issue (ie ABc fails but abC, aBC, AbC, aBc, Abc)
-    2) Owlpha loop has been fixed may need additonal testing with real data/images
-    
+    1) Error with index formula for main base and possible permuation (919 and 199 dont work but most other combintations do)
+    2) Error with corrent string owlpha loop adding two many digits 
 */
 
 const bursonCryptopgraphy = require('./base64Encryption.js'); // Import functions from file into object. 
@@ -53,7 +51,7 @@ const ifI_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars2); //  c
 const ifP_mHasDuplicate = bursonCryptopgraphy.hasDuplicates(uniqueChars3); //  checks the array uniqueChars3 has no repeated elements
 
 let intersection = bursonCryptopgraphy.checkIntersection(); // has not been verified but purposes is to check if the intersecion of A_m, I_m, and P_m is empty.
-var base64TestString = `data:image/png;base64, 1234AbCvVViL1234AbCvVVinjrnfjrfnrfrfnJJJJJJ3i3eijekmddmkinAiOllLoL1234AbCvVVininAiOllLoL`; // Edit string here to test and gather results. 
+var base64TestString = `data:image/png;base64, 123dknednkeedekdneABcUjIJJJKeABcUjIJJJKL18hBNjndk123dknedeABcUjIJJJKL18hBNjndk123dknedL18hBNjndk123dknednkeedekdnedk123dknednkeedekdnedk`; // Edit string here to test and gather results. 
 
 if(uniqueChars.length >= mainBase**modulus && !ifA_mHasDuplicate && !ifI_mHasDuplicate && !ifP_mHasDuplicate && intersection){
     console.log('calling compressor using unique set of symbols generated with length:', uniqueChars.length);
